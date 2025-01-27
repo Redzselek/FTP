@@ -1,0 +1,42 @@
+#blog-title{
+    color: #42aaff;
+    text-shadow: black 0.1em 0.1em 0.2em;
+    font-size: 50px;
+    text-align: center;
+    margin-bottom: 20px;
+    font-family: Impact, 'Arial';
+}
+
+#blog-author{
+    color: blue;
+    font-size: 20px;
+    text-align: center;
+    margin-bottom: 20px;
+}
+
+#blog-date{
+    color: blue;
+    font-size: 20px;
+    text-align: center;
+    margin-bottom: 20px;
+}
+
+#blog-content{
+    font-size: 20px;
+    margin-bottom: 20px;
+    text-align: justify;
+}
+
+#blog-kep{
+    display: block;
+    margin-left: auto;
+    margin-right: auto;
+    width: 50%;
+}
+
+#blog-nav{
+    background-color: #42aaff;
+    text-align: center;
+    display: flex;
+    
+}

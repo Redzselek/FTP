@@ -1,0 +1,48 @@
+CREATE DATABASE Iskola
+	CHARACTER SET utf8
+	COLLATE utf8_hungarian_ci;
+
+------------------------------------------------------------------------------------
+
+CREATE TABLE Diakok
+(
+diak_id int(10) primary key AUTO_INCREMENT,
+nev varchar(25),
+osztaly varchar(20),
+szuletesi_datum date
+);
+
+------------------------------------------------------------------------------------
+
+CREATE TABLE Tanarok
+(
+tanar_id int(10) primary key AUTO_INCREMENT,
+nev varchar(25),
+szak varchar(20),
+szuletesi_datum date
+);
+
+------------------------------------------------------------------------------------
+
+CREATE TABLE Tantargyak
+(
+tantargy_id int(10) primary key AUTO_INCREMENT,
+nev varchar(25),
+leiras varchar(20)
+);
+
+------------------------------------------------------------------------------------
+
+CREATE TABLE Orak
+(
+ora_id int(10) primary key AUTO_INCREMENT,
+tantargy_id int(25),
+tanar_id varchar(20),
+osztaly varchar(20),
+datum date,
+idopont time
+);
+
+
+------------------------------------------------------------------------------------
+

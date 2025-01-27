@@ -1,0 +1,299 @@
+@import url('https://fonts.googleapis.com/css2?family=Raleway:ital,wght@0,100..900;1,100..900&display=swap');
+
+html {
+    scroll-behavior: smooth;
+}
+
+*{
+    font-family: "Raleway", sans-serif;
+  font-optical-sizing: auto;
+  font-weight: 500;
+  font-style: normal;
+}
+
+body{
+    margin: 0;
+    padding: 0;
+    background: repeating-linear-gradient(
+    to right, 
+    rgb(253, 211, 155), 
+    rgb(253, 211, 155) 1px, 
+    rgb(255, 227, 190) 1px, 
+    rgb(255, 227, 190) 30px
+);
+}
+
+.header{
+    width: 80%;
+    height: auto;
+    margin: 0 auto;
+    display: flex;
+    flex-wrap: wrap;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    flex: 1 1 auto;
+}
+.header img{
+    width: 20rem;
+    height: 20rem;
+}
+.header h2{
+    margin: 0 auto;
+    padding-bottom: 15px;
+    font-size: 3rem;
+    font-weight: 800;
+    color: white;
+    text-shadow: 2px 0 #000000, -2px 0 #000000, 0 2px #000000, 0 -2px #000000,
+    1px 1px #000000, -1px -1px #000000, 1px -1px #000000, -1px 1px #000000;
+}
+
+.menu{
+    border-top: 2px solid black;
+    width: 80%;
+    height: auto;
+    margin: 0 auto;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+.menu a{
+    text-decoration: none;
+    margin: 15px;
+    color: black;
+    font-size: 1.3rem;
+}
+.menu a:hover{
+    text-decoration: underline;
+}
+
+.main{
+    width: 80%;
+    height: auto;
+    margin: 0 auto;
+    display: flex;
+    flex-wrap: wrap;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    padding-top: 40px;
+}
+
+.welcome{
+    background-color: white;
+    border-radius: 25px;
+    padding: 15px;
+    border: 5px solid rgb(202, 202, 202);
+    margin-bottom: 40px;
+}
+.welcome h1{
+    font-weight: 700;
+}
+
+.animals{
+    border: 2px solid rgb(202, 202, 202);
+    background-color: white;
+    display: flex;
+    flex-direction: row;
+    padding: 15px;
+    margin: 15px;
+    flex-wrap: wrap;
+    border-radius: 25px;
+    width: 80%;
+    margin: 0 auto;
+    padding: 20px;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 40px;
+}
+.card{
+    width: 18rem;
+    height: 25rem;
+    border: 2px solid rgb(202, 202, 202);
+    margin: 15px;
+    padding: 10px;
+    box-shadow: 5px 5px rgba(0, 0, 0, 0.3);
+    transition: 0.1s ease-in;
+}
+.card:hover{
+    scale: 1.02;
+    transition: 0.1s ease-in;
+}
+.nameage h3{
+    font-weight: 600;
+    font-size: 30px;
+    margin-bottom: 0
+} 
+.nameage p{
+    font-size: 20px;
+    margin-top: 0;
+    padding-bottom: 5px;
+    border-bottom: 1px solid rgb(202, 202, 202);
+}
+.species{
+    text-align: right;
+    margin-right: 5px;
+}
+.species p{
+    font-style: italic;
+}
+.card p{
+    margin: 5px;
+}
+.about{
+    margin-top: 40px;
+}
+
+.footer{
+    border-top: 2px solid black;
+    border-top-left-radius: 25px;
+    border-top-right-radius: 25px;
+    background-color: rgb(39, 39, 39);
+    width: 95%;
+    height: auto;
+    margin: 0 auto;
+    display: flex;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    align-items: center;
+    padding-top: 40px;
+    padding-bottom: 40px;
+    font-size: 1.1rem;
+    color: rgb(202, 202, 202);
+}
+.footer div{
+    margin-left: 10rem;
+    font-size: 1.3rem;
+}
+.footer form{
+    margin-right: 10rem;
+    width: 300px;
+}
+#name, #email{
+    padding: 10px;
+    border: none;
+    border-radius: 5px;
+    width: 300px;
+    margin: 5px;
+}
+.footer form input{
+    padding: 10px;
+    border: none;
+    border-radius: 5px;
+    width: 100px;
+}
+.footer textarea{
+    margin: 5px;
+    border-radius: 10px;
+}
+
+.container{
+    width: 80%;
+    height: auto;
+    margin: 0 auto;
+    display: flex;
+    flex-wrap: wrap;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+}
+
+.form{
+    font-size: 20px;
+    border: 2px solid rgb(202, 202, 202);
+    background-color: white;
+    padding: 15px;
+    margin: 15px;
+    border-radius: 25px;
+    margin-bottom: 40px;
+}
+.form input{
+    padding: 10px;
+    border: 2px solid rgb(202, 202, 202);
+    border-radius: 5px;
+    width: 250px;
+    margin: 5px;
+    font-size: 15px;
+}
+.form select{
+    padding: 10px;
+    border: 2px solid rgb(202, 202, 202);
+    border-radius: 5px;
+    width: auto;
+    margin: 5px;
+    font-size: 15px;
+}
+
+.nyilvantartas h1{
+    font-weight: 600;
+    font-size: 40px;
+}
+
+.oltas{
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 10px;
+}
+.oltas label{
+    margin-right: 10px;
+}
+.oltas input[type="checkbox"]{
+    width: 20px;
+    height: 20px;
+    margin-right: 10px;
+}
+.editDelete button{
+    padding: 5px;
+    background-color: white;
+    font-size: 20px;
+    border: 1px solid rgb(202, 202, 202);
+    border: none;
+    cursor: pointer;
+}
+.editDelete{
+    padding-top: 5px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    justify-content: space-between;
+}
+
+#feltolt{
+    padding: 10px;
+    border: 2px solid rgb(202, 202, 202);
+    border-radius: 5px;
+    width: 250px;
+    margin: 5px;
+    font-size: 15px;
+    cursor: pointer;
+}
+
+@media screen and (max-width: 600px) {
+    .header h2{
+        font-size: 1.9rem;
+    }
+    .footer{
+        justify-content: center;
+        align-items: center;
+        border-radius: 0;
+        width: 100%;
+    }
+    .footer div{
+        margin-bottom: 10px;
+        margin-left: 0;
+        font-size: 1.1rem;
+    }
+    .footer form{
+        margin-right: 0;
+    }
+    .container{
+        width: 100%;
+    }
+    .oltas{
+        flex-wrap: wrap;
+        flex-direction: column;
+    }
+}
