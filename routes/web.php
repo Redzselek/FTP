@@ -23,14 +23,38 @@ Route::controller(VizsgaremekController::class)->group(function () {
     Route::get('/vizsgaremek/fooldal', 'Fooldal')->name('fooldal');
 });
 
-Route::group(['middleware' => 'auth'], function () {
-    Route::controller(VizsgaremekController::class)->group(function () {
-        Route::get('/teliprojekt/kijelentkezes', 'Kijelentkezes')->name('kijelentkezes');
-        Route::get('/teliprojekt/jelszo-valtoztatas', 'JelszoValtoztatas')->name('valtoztatas');
-        Route::post('/teliprojekt/jelszo-valtoztatas', 'JelszoValtoztatasMentes')->name('valtoztatas-mentes');
-        Route::get('/teliprojekt/profil', 'Profil')->name('profil');
-        Route::post('/teliprojekt/profil/nev-valtoztatas', 'NevValtoztatas')->name('nev.valtoztatas');
-    });
-});
+// Route::group(['middleware' => 'auth'], function () {
+//     Route::controller(VizsgaremekController::class)->group(function () {
+//         Route::get('/vizsgaremek/kijelentkezes', 'Kijelentkezes')->name('kijelentkezes');
+//         Route::get('/vizsgaremek/jelszo-valtoztatas', 'JelszoValtoztatas')->name('valtoztatas');
+//         Route::post('/vizsgaremek/jelszo-valtoztatas', 'JelszoValtoztatasMentes')->name('valtoztatas-mentes');
+//         Route::get('/vizsgaremek/profil', 'Profil')->name('profil');
+//         Route::post('/vizsgaremek/profil/nev-valtoztatas', 'NevValtoztatas')->name('nev.valtoztatas');
+//     });
+// });
 
-//Route kontrollerekkel
+
+Route::middleware(['auth'])->group(function () {
+    
+    
+    Route::controller(VizsgaremekController::class)->group(function () {
+        Route::get('/vizsgaremek/kijelentkezes', 'Kijelentkezes')->name('kijelentkezes');
+        Route::get('/vizsgaremek/jelszo-valtoztatas', 'JelszoValtoztatas')->name('valtoztatas');
+        Route::post('/vizsgaremek/jelszo-valtoztatas', 'JelszoValtoztatasMentes')->name('valtoztatas-mentes');
+        Route::get('/vizsgaremek/profil', 'Profil')->name('profil');
+        Route::post('/vizsgaremek/profil/nev-valtoztatas', 'NevValtoztatas')->name('nev.valtoztatas');
+        // CRUD műveletek
+        Route::get('/vizsgaremek/feltoltes', 'FeltoltesOldal')->name('feltoltesoldal');
+        Route::post('/vizsgaremek/feltoltes', 'FeltoltesKezelo')->name('feltoltes');
+        Route::get('/vizsgaremek/musorok', 'Musorok')->name('musorok');
+        Route::get('/vizsgaremek/musorok/tovabbinezet/{id}', 'MusorMegtekint')->name('musor.megtekint');
+        Route::post('/vizsgaremek/musor-szerkesztes', 'MusorSzerkesztes')->name('musor.szerkesztes');
+        Route::delete('/vizsgaremek/musor-torles', 'MusorTorles')->name('musor.torles');
+        Route::post('/vizsgaremek/musorok/ertekeles/{musor_id}', 'MusorErtekeles')->name('musor.ertekeles');
+        Route::post('/vizsgaremek/musorok/hozzaszolas/{musor_id}', 'Hozzaszolas')->name('hozzaszolas');
+        Route::post('/vizsgaremek/musorok/hozzaszolas/szerkesztes/{hozzaszolas_id}', 'KommentSzerkesztes')->name('hozzaszolas.szerkesztes');
+        Route::post('/vizsgaremek/musorok/hozzaszolas/torles/{hozzaszolas_id}', 'KommentTorles')->name('hozzaszolas.torles');
+        Route::post('/vizsgaremek/musor/{musor_id}/hozzaszolas', [vizsgaremekController::class, 'Hozzaszolas'])->name('hozzaszolas.store')->middleware('auth');        
+    });
+    
+});

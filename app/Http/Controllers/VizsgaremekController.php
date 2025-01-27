@@ -7,13 +7,14 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Hash;
 use App\Models\User;
+use App\Models\Users;
 use App\Models\VizsgaRatings;
 use App\Models\VizsgaComments;
 use App\Models\VizsgaLevel;
 use App\Models\VizsgaShows;
 use Exception;
 
-abstract class VizsgaremekController extends Controller
+class VizsgaremekController extends Controller
 {
     //Robi álltal készített kód innentől indul
     public function Regisztralas(Request $request)
@@ -61,7 +62,7 @@ abstract class VizsgaremekController extends Controller
         }
 
         // Get top 5 rated shows
-        $topMusorok = VizsgaShows::select('id', 'cim', 'kep_url', 'user_rating')
+        $topMusorok = VizsgaShows::select('id', 'title', 'image_url', 'user_rating')
             ->orderBy('user_rating', 'desc')
             ->take(6)
             ->get();
@@ -71,7 +72,7 @@ abstract class VizsgaremekController extends Controller
             ->get();
 
             return view('vizsgaremek.fooldal', [
-                // 'user' => $user,
+                'user' => $user,
                 'topMusorok' => $topMusorok,
                 'latestComments' => $latestComments
             ]);
@@ -139,7 +140,7 @@ abstract class VizsgaremekController extends Controller
     {
         $request->validate(['email' => 'required|email']);
 
-        $user = TeliProjektFelhasznalok::where('email', $request->email)->first();
+        $user = User::where('email', $request->email)->first();
 
         if ($user) {
             $newPassword = Str::random(10);
@@ -148,9 +149,9 @@ abstract class VizsgaremekController extends Controller
 
             $message = "Kedves Felhasználó!\n\n";
             $message .= 'Az új jelszavad: ' . $newPassword . "\n\n";
-            $message .= "Jelszavadat itt tudod megváltoztatni bejelentkezés után: https://egyedirobi.moriczcloud.hu/teliprojekt/jelszo-valtoztatas\n\n";
+            $message .= "Jelszavadat itt tudod megváltoztatni bejelentkezés után: https://egyedirobi.moriczcloud.hu/vizsgaremek/jelszo-valtoztatas\n\n";
             $message .= "Üdvözlettel,\n";
-            $message .= 'Téli-Projekt';
+            $message .= 'Vizsgaremek';
 
             mail($request->email, 'Új jelszó', $message);
 
@@ -199,11 +200,11 @@ abstract class VizsgaremekController extends Controller
         $message = 'Kedves ' . $user->name . "!\n\n";
         $message .= "A jelszavad sikeresen megváltozott.\n";
         $message .= "Ha nem te kezdeményezted ezt a változtatást, kérjük azonnal lépj kapcsolatba velünk.\n\n";
-        $message .= "Üdvözlettel,\nTéli-Projekt";
+        $message .= "Üdvözlettel,\nVizsgaremek";
 
         mail($user->email, 'Jelszó sikeresen megváltozott', $message);
 
-        return redirect('/teliprojekt/fooldal')->with('status', 'A jelszó sikeresen megváltozott!');
+        return redirect('/vizsgaremek/fooldal')->with('status', 'A jelszó sikeresen megváltozott!');
     }
 
     /**
@@ -221,7 +222,7 @@ abstract class VizsgaremekController extends Controller
         $useradat = Auth::user();
 
         // Ellenőrizzük, hogy létezik-e már ilyen nevű felhasználó
-        $existingUser = TeliProjektFelhasznalok::where('name', $request->name)
+        $existingUser = User::where('name', $request->name)
             ->where('id', '!=', $useradat->id)
             ->first();
 
@@ -234,7 +235,7 @@ abstract class VizsgaremekController extends Controller
 
         try {
             // Ha nincs ilyen név, akkor frissítjük
-            TeliProjektFelhasznalok::where('id', $useradat->id)->update(['name' => $request->name]);
+            User::where('id', $useradat->id)->update(['name' => $request->name]);
 
             return response()->json([
                 'success' => true,
@@ -256,7 +257,7 @@ abstract class VizsgaremekController extends Controller
     public function Profil()
     {
         $useradat = Auth::user();
-        $musorok = TeliProjektMusorok::where('user_id', $useradat->id)
+        $musorok = VizsgaShows::where('user_id', $useradat->id)
             ->orderBy('created_at', 'desc')
             ->get();
         $user = [
@@ -290,9 +291,9 @@ abstract class VizsgaremekController extends Controller
         $data = $request->all();
         $request->validate([
             'file' => 'required|file|mimes:jpg,jpeg,png,webp|max:2048',
-            'cim' => 'required|string|max:200',
-            'leiras' => 'required|string',
-            'kategoria' => 'required|in:film,sorozat',
+            'title' => 'required|string|max:200',
+            'description' => 'required|string',
+            'category' => 'required|in:film,sorozat',
         ]);
 
         if ($request->file()) {
@@ -300,11 +301,11 @@ abstract class VizsgaremekController extends Controller
             $destinationPath = public_path('uploads/vizsgaremek/');
             $request->file('file')->move($destinationPath, $fileName);
 
-            $upload = new VizsgaremekMusorok();
-            $upload->cim = $data['cim'];
-            $upload->leiras = $data['leiras'];
-            $upload->kep_url = $fileName;
-            $upload->kategoria = $data['kategoria'];
+            $upload = new VizsgaShows();
+            $upload->title = $data['title'];
+            $upload->description = $data['description'];
+            $upload->image_url = $fileName;
+            $upload->category = $data['category'];
             $upload->user_id = auth()->id();
             $upload->save();
 
@@ -321,7 +322,7 @@ abstract class VizsgaremekController extends Controller
     public function Musorok()
     {
         $useradat = Auth::user();
-        $musorok = VizsgaremekMusorok::join('vizsgaremek_felhasznalok', 'vizsgaremek_musorok.user_id', '=', 'vizsgaremek_felhasznalok.id')->select('vizsgaremek_musorok.*', 'vizsgaremek_felhasznalok.name as feltolto_neve')->orderBy('created_at', 'desc')->get();
+        $musorok = VizsgaShows::join('user', 'shows.user_id', '=', 'user.id')->select('shows.*', 'user.name as feltolto_neve')->orderBy('created_at', 'desc')->get();
 
         $user = ['name' => $useradat->name];
         return view('vizsgaremek.musorok', compact('user', 'musorok'));
@@ -337,11 +338,11 @@ abstract class VizsgaremekController extends Controller
     {
         $musor_ids = $request->input('musor_ids', []);
 
-        $musorok = VizsgaremekMusorok::whereIn('id', $musor_ids)->where('user_id', auth()->id())->get();
+        $musorok = VizsgaShows::whereIn('id', $musor_ids)->where('user_id', auth()->id())->get();
 
         foreach ($musorok as $musor) {
             // Kép törlés
-            $imagePath = public_path('uploads/vizsgaremek/' . $musor->kep_url);
+            $imagePath = public_path('uploads/vizsgaremek/' . $musor->image_url);
             if (file_exists($imagePath)) {
                 unlink($imagePath);
             }
@@ -362,23 +363,23 @@ abstract class VizsgaremekController extends Controller
     {
         $request->validate([
             'id' => 'required|exists:vizsgaremek_musorok,id',
-            'cim' => 'required|string|max:200',
+            'title' => 'required|string|max:200',
             'leiras' => 'required|string',
             'kategoria' => 'required|in:film,sorozat',
             'file' => 'nullable|file|mimes:jpg,jpeg,png,webp|max:2048',
         ]);
 
-        $musor = VizsgaremekMusorok::where('id', $request->id)
+        $musor = VizsgaShows::where('id', $request->id)
             ->where('user_id', auth()->id())
             ->firstOrFail();
 
-        $musor->cim = $request->cim;
+        $musor->title = $request->title;
         $musor->leiras = $request->leiras;
         $musor->kategoria = $request->kategoria;
 
         if ($request->hasFile('file')) {
             // Kép törlés
-            $oldImagePath = public_path('uploads/vizsgaremek/' . $musor->kep_url);
+            $oldImagePath = public_path('uploads/vizsgaremek/' . $musor->image_url);
             if (file_exists($oldImagePath)) {
                 unlink($oldImagePath);
             }
@@ -386,7 +387,7 @@ abstract class VizsgaremekController extends Controller
             // Új kép feltöltés
             $fileName = time() . '_' . $request->file->getClientOriginalName();
             $request->file('file')->move(public_path('uploads/vizsgaremek/'), $fileName);
-            $musor->kep_url = $fileName;
+            $musor->image_url = $fileName;
         }
 
         $musor->save();
@@ -418,7 +419,7 @@ abstract class VizsgaremekController extends Controller
 
     public function MusorMegtekint($id)
     {
-        $musor = VizsgaremekMusorok::findOrFail($id);
+        $musor = VizsgaShows::findOrFail($id);
         $hozzaszolasok = VizsgaremekHozzaszolas::where('musor_id', $id)
             ->orderBy('created_at', 'desc')
             ->with('user')
@@ -456,7 +457,7 @@ abstract class VizsgaremekController extends Controller
         }
         $averageRating = VizsgaremekErtekeles::where('musor_id', $request->musor_id)->avg('ertekeles');
 
-        $musor = VizsgaremekMusorok::find($request->musor_id);
+        $musor = VizsgaShows::find($request->musor_id);
         $musor->user_rating = floor($averageRating); 
         $musor->save();
 

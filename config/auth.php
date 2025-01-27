@@ -62,9 +62,9 @@ return [
     'providers' => [
         'users' => [
             'driver' => 'eloquent',
-            // 'model' => env('AUTH_MODEL', App\Models\User::class), 
+            'model' => env('AUTH_MODEL', App\Models\User::class), 
             // ⬆⬆⬆⬆ EZT KELL VISSZA ÁLLÍTANI HA A USER-T AKAROM HASZNÁLNI ⬆⬆⬆⬆
-            'model' => App\Models\TeliProjektFelhasznalok::class,
+            // 'model' => App\Models\TeliProjektFelhasznalok::class,
         ],
 
         // 'users' => [
