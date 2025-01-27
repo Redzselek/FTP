@@ -71,7 +71,7 @@ abstract class VizsgaremekController extends Controller
             ->get();
 
             return view('vizsgaremek.fooldal', [
-                'user' => $user,
+                // 'user' => $user,
                 'topMusorok' => $topMusorok,
                 'latestComments' => $latestComments
             ]);
