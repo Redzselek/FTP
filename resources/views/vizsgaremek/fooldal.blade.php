@@ -12,12 +12,12 @@
             @foreach($topMusorok as $musor)
                 <div class="col-md-4 mb-3">
                     <div class="card">
-                        @if($musor->kep_url)
-                        <div style="height: 350px; width: 350px; background: url('/uploads/vizsgaremek/{{$musor->kep_url}}'); background-size: contain; background-repeat: no-repeat; background-position: center center; margin-left: auto; margin-right: auto">
+                        @if($musor->image_url)
+                        <div style="height: 350px; width: 350px; background: url('/uploads/vizsgaremek/{{$musor->image_url}}'); background-size: contain; background-repeat: no-repeat; background-position: center center; margin-left: auto; margin-right: auto">
                         </div>
                         @endif
                         <div class="card-body">
-                            <h5 class="card-title">{{ $musor->cim }}</h5>
+                            <h5 class="card-title">{{ $musor->title }}</h5>
                             <p class="card-text">
                                 <strong>Értékelés:</strong> {{ number_format($musor->user_rating, 1) }} / 5
                             </p>
@@ -39,12 +39,12 @@
                 <div class="col-md-6 mb-3">
                     <div class="card">
                         <div class="card-body">
-                            <h5 class="card-title">{{ $comment->musor->cim }}</h5>
-                            <p class="card-text">{{ $comment->hozzaszolas }}</p>
+                            <h5 class="card-title">{{ $comment->show->title }}</h5>
+                            <p class="card-text">{{ $comment->comment }}</p>
                             <div class="text-muted">
                                 <small>Írta: {{ $comment->user->name }} - {{ $comment->created_at->diffForHumans() }}</small>
                             </div>
-                            <a href="{{ route('musor.megtekint', $comment->musor_id) }}" class="btn btn-sm btn-primary mt-2">Műsor megtekintése</a>
+                            <a href="{{ route('musor.megtekint', $comment->show_id) }}" class="btn btn-sm btn-primary mt-2">Műsor megtekintése</a>
                         </div>
                     </div>
                 </div>

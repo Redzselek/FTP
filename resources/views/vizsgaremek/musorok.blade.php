@@ -8,18 +8,19 @@
         @foreach($musorok as $musor)
         <div class="col-md-4 mb-4">
             <div class="card h-100" onclick="window.location.href='musorok/tovabbinezet/{{ $musor->id }}'">
-                @if($musor->kep_url)
-                    <div style="height: 350px; width: 350px; background: url('/uploads/vizsgaremek/{{$musor->kep_url}}'); background-size: contain; background-repeat: no-repeat; background-position: center center; margin-left: auto; margin-right: auto">
+                @if($musor->image_url)
+                    <div style="height: 350px; width: 350px; background: url('/uploads/vizsgaremek/{{$musor->image_url}}'); background-size: contain; background-repeat: no-repeat; background-position: center center; margin-left: auto; margin-right: auto">
                     </div>
                 @endif
                 <div class="card-body">
-                    <h5 class="card-title">{{ $musor->cim }}</h5>
+                    <h5 class="card-title">{{ $musor->title }}</h5>
                     <p class="card-text">
-                        <small class="text-muted">Feltöltő: {{ $musor->feltolto_neve }}</small>
+                        <small class="text-muted">Feltöltő: {{ $musor->nev }}</small>
                     </p>
-                    <p class="card-text">{{ $musor->leiras }}</p>
+                    <p class="card-text">{{ $musor->description }}</p>
                     <p class="card-text">
-                        <span class="badge bg-primary">{{ $musor->category }}</span>
+                        <span class="badge bg-primary">{{ $musor->type }}</span>
+                        <span class="badge bg-secondary">{{ $musor->category }}</span>
                     </p>
                     <p class="card-text">
                         <small class="text-muted">

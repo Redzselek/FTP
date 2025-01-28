@@ -7,30 +7,37 @@
             @csrf
             <h1>Tölts fel műsort</h1>
             <div class="mb-3">
-                <label for="cim" class="form-label">Cím</label>
-                <input type="text" class="form-control" id="cim" name="cim" maxlength=50 required>
+                <label for="title" class="form-label">Cím</label>
+                <input type="text" class="form-control" id="title" name="title" maxlength="200" required>
                 <div class="invalid-feedback">
                     Kérlek add meg a címét!
                 </div>
             </div>
             <div class="mb-3">
-                <label for="leiras" class="form-label">Leírása</label>
-                <input type="text" class="form-control" id="leiras" name="leiras" maxlength=500>
+                <label for="description" class="form-label">Leírása</label>
+                <textarea class="form-control" id="description" name="description" rows="3"></textarea>
             </div>
             <div class="mb-3">
-                <label for="kategoria" class="form-label">Kategória</label>
-                <select class="form-select" id="kategoria" name="kategoria" required>
+                <label for="category" class="form-label">Kategória</label>
+                <input type="text" class="form-control" id="category" name="category" maxlength="20" required>
+                <div class="invalid-feedback">
+                    Kérlek add meg a kategóriát!
+                </div>
+            </div>
+            <div class="mb-3">
+                <label for="type" class="form-label">Típus</label>
+                <select class="form-select" id="type" name="type" required>
                     <option value="">Válassz...</option>
                     <option value="film">Film</option>
                     <option value="sorozat">Sorozat</option>
                 </select>
                 <div class="invalid-feedback">
-                    Kérlek válassz egy kategóriát!
+                    Kérlek válassz egy típust!
                 </div>
             </div>
             <div class="mb-3">
-                <label for="file" class="form-label">Add meg a műsor borítóképét</label>
-                <input type="file" class="form-control" id="file" name="file" accept="image/*" required>
+                <label for="image" class="form-label">Add meg a műsor borítóképét</label>
+                <input type="file" class="form-control" id="image" name="image" accept="image/*" required>
                 <div class="invalid-feedback">
                     Kérlek add meg a borítóképét!
                 </div>
@@ -39,33 +46,54 @@
         </form>
     </div>
 </div>
-    {{-- Az action részben annak a route-nak a name tulajdonsága van, amit meg akarunk hívni, akinek az adatot küldjük.
 
-    A form alatt/fölött legyen egy ilyen rész, ez fogadja a visszatérő adatot (siker/hiba): --}}
-    <!-- Modal -->
-    <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
-        <div class="modal-dialog">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="exampleModalLabel">Feltöltés eredménye</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                </div>
-                <div class="modal-body">
-                    @if(session('success'))
-                    <div style="color: green">
-                        {{ session('success') }}
-                    </div>
-                    @elseif (session('error'))
-                    <div style="color: red">
-                        {{ session('error') }}
-                    </div>
-                    @endif
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Bezárás</button>
-                </div>
+@if(session('success'))
+<div class="modal fade" id="successModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Feltöltés eredménye</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                {{ session('success') }}
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Bezár</button>
             </div>
         </div>
     </div>
+</div>
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        var modal = new bootstrap.Modal(document.getElementById('successModal'));
+        modal.show();
+    });
+</script>
+@endif
 
+@if(session('error'))
+<div class="modal fade" id="errorModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Hiba</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                {{ session('error') }}
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Bezár</button>
+            </div>
+        </div>
+    </div>
+</div>
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        var modal = new bootstrap.Modal(document.getElementById('errorModal'));
+        modal.show();
+    });
+</script>
+@endif
 @endsection

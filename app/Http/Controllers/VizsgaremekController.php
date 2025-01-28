@@ -7,16 +7,15 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Hash;
 use App\Models\User;
-use App\Models\Users;
+use App\Models\VizsgaShows;
 use App\Models\VizsgaRatings;
 use App\Models\VizsgaComments;
 use App\Models\VizsgaLevel;
-use App\Models\VizsgaShows;
+use App\Models\VizsgaWatchlist;
 use Exception;
 
 class VizsgaremekController extends Controller
 {
-    //Robi álltal készített kód innentől indul
     public function Regisztralas(Request $request)
     {
         $validated = $request->validate([
@@ -38,21 +37,11 @@ class VizsgaremekController extends Controller
         return redirect('/vizsgaremek/fooldal');
     }
 
-    /**
-     * Regisztrációs oldal megjelenítése
-     *
-     * Regisztrációs űrlap nézet
-     */
     public function Regisztracio()
     {
         return view('vizsgaremek.regisztracio');
     }
 
-    /**
-     * Főoldal megjelenítése
-     *
-     * @return view Főoldal nézet a felhasználói adatokkal
-     */
     public function Fooldal()
     {
         $useradat = Auth::user();
@@ -70,78 +59,46 @@ class VizsgaremekController extends Controller
             ->orderBy('created_at', 'desc')
             ->take(4)
             ->get();
-
-            return view('vizsgaremek.fooldal', [
-                'user' => $user,
-                'topMusorok' => $topMusorok,
-                'latestComments' => $latestComments
-            ]);
+        return view('vizsgaremek.fooldal', [
+            'user' => $user,
+            'topMusorok' => $topMusorok,
+            'latestComments' => $latestComments
+        ]);
     }
 
-    /**
-     * Kijelentkezés kezelése
-     *
-     * Átirányítás a bejelentkezési oldalra
-     */
     public function Kijelentkezes()
     {
         Auth::logout();
         return redirect('/vizsgaremek/login');
     }
 
-    /**
-     * Bejelentkezési oldal megjelenítése
-     *
-     * Bejelentkezési űrlap nézet
-     */
     public function Login()
     {
         return view('vizsgaremek.login');
     }
 
-    /**
-     * Bejelentkezés kezelése
-     *
-     * A bejelentkezési űrlap adatai
-     * Átirányítás a főoldalra sikeres bejelentkezés esetén
-     */
     public function Bejelentkezes(Request $request)
-    {
+    { 
         $email = $request->input('email');
         $password = $request->input('password');
-
         if (Auth::attempt(['email' => $email, 'password' => $password])) {
             $request->session()->regenerate();
             return redirect('/vizsgaremek/fooldal');
         }
-
         return back()->withErrors([
             'email' => 'A megadott hitelesítő adatok nem egyeznek.',
         ]);
     }
 
-    /**
-     * Elfelejtett jelszó oldal megjelenítése
-     *
-     * Elfelejtett jelszó űrlap nézet
-     */
     public function ElfelejtettJelszo()
     {
         return view('vizsgaremek.elfelejtett-jelszo');
     }
 
-    /**
-     * Elfelejtett jelszó kezelése
-     *
-     * Az elfelejtett jelszó űrlap adatai
-     * Visszairányítás az előző oldalra sikerességi üzenettel
-     */
     public function ElfelejtettJelszoKuldes(Request $request)
     {
         $request->validate(['email' => 'required|email']);
-
         $user = User::where('email', $request->email)->first();
-
         if ($user) {
             $newPassword = Str::random(10);
             $user->password = bcrypt($newPassword);
@@ -157,15 +114,9 @@ class VizsgaremekController extends Controller
 
             return back()->with('status', 'Az új jelszót elküldtük az email címedre!');
         }
-
         return back()->withErrors(['email' => 'Nem található felhasználó ezzel az email címmel.']);
     }
 
-    /**
-     * Jelszó változtatás oldal megjelenítése
-     *
-     * Jelszó változtatás űrlap nézet
-     */
     public function JelszoValtoztatas()
     {
         $useradat = Auth::user();
@@ -173,12 +124,6 @@ class VizsgaremekController extends Controller
         return view('vizsgaremek.jelszo-valtoztatas', compact('user'));
     }
 
-    /**
-     * Jelszó változtatás kezelése
-     *
-     * A jelszó változtatás űrlap adatai
-     * Átirányítás a főoldalra sikeres jelszó változtatás esetén
-     */
     public function JelszoValtoztatasMentes(Request $request)
     {
         $request->validate([
@@ -186,17 +131,13 @@ class VizsgaremekController extends Controller
             'new_password' => 'required|string|min:8|different:current_password',
             'new_password_confirmation' => 'required|same:new_password',
         ]);
-
         $user = Auth::user();
-
         if (!Hash::check($request->current_password, $user->password)) {
             return back()->withErrors(['current_password' => 'A jelenlegi jelszó nem megfelelő.']);
         }
-
         $user->password = bcrypt($request->new_password);
         $user->save();
 
-        // Sikeresen megváltoztatott jelszó email
         $message = 'Kedves ' . $user->name . "!\n\n";
         $message .= "A jelszavad sikeresen megváltozott.\n";
         $message .= "Ha nem te kezdeményezted ezt a változtatást, kérjük azonnal lépj kapcsolatba velünk.\n\n";
@@ -207,36 +148,23 @@ class VizsgaremekController extends Controller
         return redirect('/vizsgaremek/fooldal')->with('status', 'A jelszó sikeresen megváltozott!');
     }
 
-    /**
-     * Név változtatás kezelése
-     *
-     * A név változtatás űrlap adatai
-     * Sikeres név változtatás visszajelzése
-     */
     public function NevValtoztatas(Request $request)
     {
         $request->validate([
             'name' => 'required|string|max:255',
         ]);
-
         $useradat = Auth::user();
-
-        // Ellenőrizzük, hogy létezik-e már ilyen nevű felhasználó
         $existingUser = User::where('name', $request->name)
             ->where('id', '!=', $useradat->id)
             ->first();
-
         if ($existingUser) {
             return response()->json([
                 'success' => false,
                 'error' => 'Ez a név már foglalt!',
             ]);
         }
-
         try {
-            // Ha nincs ilyen név, akkor frissítjük
             User::where('id', $useradat->id)->update(['name' => $request->name]);
-
             return response()->json([
                 'success' => true,
                 'name' => $request->name,
@@ -249,11 +177,6 @@ class VizsgaremekController extends Controller
         }
     }
 
-    /**
-     * Profil oldal megjelenítése
-     *
-     * Profil nézet a felhasználói adatokkal és műsorokkal
-     */
     public function Profil()
     {
         $useradat = Auth::user();
@@ -268,11 +191,6 @@ class VizsgaremekController extends Controller
         return view('vizsgaremek.profil', compact('user', 'musorok'));
     }
 
-    /**
-     * Feltöltés oldal megjelenítése
-     *
-     * Feltöltés űrlap nézet
-     */
     public function FeltoltesOldal()
     {
         $useradat = Auth::user();
@@ -280,60 +198,50 @@ class VizsgaremekController extends Controller
         return view('vizsgaremek.feltoltes', compact('user'));
     }
 
-    /**
-     * Műsorok feltöltésének kezelése
-     *
-     * A feltöltési űrlap adatai
-     * Visszairányítás az előző oldalra sikerességi üzenettel
-     */
     public function FeltoltesKezelo(Request $request)
     {
-        $data = $request->all();
-        $request->validate([
-            'file' => 'required|file|mimes:jpg,jpeg,png,webp|max:2048',
+        $validated = $request->validate([
             'title' => 'required|string|max:200',
-            'description' => 'required|string',
-            'category' => 'required|in:film,sorozat',
+            'description' => 'nullable|string',
+            'category' => 'required|string|max:20',
+            'type' => 'required|in:f,s',
+            'image' => 'required|image|max:2048'
         ]);
 
-        if ($request->file()) {
-            $fileName = time() . '_' . $request->file->getClientOriginalName();
-            $destinationPath = public_path('uploads/vizsgaremek/');
-            $request->file('file')->move($destinationPath, $fileName);
+        try {
+            // Handle file upload
+            $imagePath = $request->file('image')->store('uploads/vizsgaremek');
+            $imageUrl = str_replace('public/', $imagePath);
 
-            $upload = new VizsgaShows();
-            $upload->title = $data['title'];
-            $upload->description = $data['description'];
-            $upload->image_url = $fileName;
-            $upload->category = $data['category'];
-            $upload->user_id = auth()->id();
-            $upload->save();
+            // Create new record
+            $show = new VizsgaShows();
+            $show->title = $validated['title'];
+            $show->description = $validated['description'];
+            $show->category = $validated['category'];
+            $show->type = $validated['type'];
+            $show->image_url = $imageUrl;
+            $show->user_id = Auth::id();
+            $show->user_rating = 0; // Default rating
+            $show->save();
 
-            return back()->with('success', 'Fájl sikeresen feltöltve.');
+            return redirect()->back()->with('success', 'A műsor sikeresen feltöltve!');
+        } catch (Exception $e) {
+            return redirect()->back()->with('error', 'Hiba történt a feltöltés során: ' . $e->getMessage());
         }
-        return back()->withErrors('A fájl feltöltése nem sikerült.');
     }
 
-    /**
-     * Összes műsor listázása
-     *
-     * Műsorok listázása nézet a felhasználói adatokkal
-     */
     public function Musorok()
     {
         $useradat = Auth::user();
-        $musorok = VizsgaShows::join('user', 'shows.user_id', '=', 'user.id')->select('shows.*', 'user.name as feltolto_neve')->orderBy('created_at', 'desc')->get();
+        $musorok = VizsgaShows::join('users', 'shows.user_id', '=', 'users.id')
+            ->select('shows.*', 'users.name as nev')
+            ->orderBy('created_at', 'desc')
+            ->get();
 
         $user = ['name' => $useradat->name];
         return view('vizsgaremek.musorok', compact('user', 'musorok'));
     }
 
-    /**
-     * Kiválasztott műsorok törlése
-     *
-     * A törlendő műsorok azonosítói
-     * Sikeres törlés visszajelzése
-     */
     public function MusorTorles(Request $request)
     {
         $musor_ids = $request->input('musor_ids', []);
@@ -341,29 +249,21 @@ class VizsgaremekController extends Controller
         $musorok = VizsgaShows::whereIn('id', $musor_ids)->where('user_id', auth()->id())->get();
 
         foreach ($musorok as $musor) {
-            // Kép törlés
-            $imagePath = public_path('uploads/vizsgaremek/' . $musor->image_url);
+            $imagePath = public_path('uploads/vizsgaremek/' . $musor->kep_url);
             if (file_exists($imagePath)) {
                 unlink($imagePath);
             }
-            // Műsor törlés
             $musor->delete();
         }
 
         return response()->json(['success' => true]);
     }
 
-    /**
-     * Műsor adatainak szerkesztése
-     *
-     * A módosított műsor adatai
-     * Sikeres módosítás visszajelzése
-     */
     public function MusorSzerkesztes(Request $request)
     {
         $request->validate([
-            'id' => 'required|exists:vizsgaremek_musorok,id',
-            'title' => 'required|string|max:200',
+            'id' => 'required|exists:shows,id',
+            'cim' => 'required|string|max:200',
             'leiras' => 'required|string',
             'kategoria' => 'required|in:film,sorozat',
             'file' => 'nullable|file|mimes:jpg,jpeg,png,webp|max:2048',
@@ -373,21 +273,18 @@ class VizsgaremekController extends Controller
             ->where('user_id', auth()->id())
             ->firstOrFail();
 
-        $musor->title = $request->title;
+        $musor->cim = $request->cim;
         $musor->leiras = $request->leiras;
         $musor->kategoria = $request->kategoria;
 
         if ($request->hasFile('file')) {
-            // Kép törlés
-            $oldImagePath = public_path('uploads/vizsgaremek/' . $musor->image_url);
+            $oldImagePath = public_path('uploads/vizsgaremek/' . $musor->kep_url);
             if (file_exists($oldImagePath)) {
                 unlink($oldImagePath);
             }
-
-            // Új kép feltöltés
             $fileName = time() . '_' . $request->file->getClientOriginalName();
             $request->file('file')->move(public_path('uploads/vizsgaremek/'), $fileName);
-            $musor->image_url = $fileName;
+            $musor->kep_url = $fileName;
         }
 
         $musor->save();
@@ -398,50 +295,25 @@ class VizsgaremekController extends Controller
         ]);
     }
 
-    //Robi álltal készített kód idáig tart
-
-    //Máté álltal készített kód innentől indul
-    /**
-     * Egy műsor részletes megtekintése
-     *
-     * $id A megtekintendő műsor azonosítója
-     * Részletes nézet a műsor adataival és hozzászólásokkal
-     *
-     * findORFail Ez biztonságosabb mint a sima find() metódus, mert:
-     *
-     *  Ha nem létezik a műsor az adott ID-val, akkor nem null-t ad vissza
-     *  helyette kivételt dob, amit Laravel automatikusan kezel
-     *  a felhasználó 404-es (Not Found) hibaoldalt kap válaszként
-     *  nem kell külön ellenőrizni, hogy létezik-e a műsor
-     *
-     *
-     */
-
     public function MusorMegtekint($id)
     {
         $musor = VizsgaShows::findOrFail($id);
-        $hozzaszolasok = VizsgaremekHozzaszolas::where('musor_id', $id)
+        $hozzaszolasok = VizsgaComments::where('musor_id', $id)
             ->orderBy('created_at', 'desc')
             ->with('user')
             ->get();
         
         return view('vizsgaremek.tovabbinezet', compact('musor', 'hozzaszolasok'));
     }
-    
 
-    /**
-     * Műsor értékelésének kezelése
-     *
-     * Az értékelés adatai (műsor_id, értékelés)
-     * Visszairányítás az előző oldalra sikerességi üzenettel
-     */
     public function MusorErtekeles(Request $request)
     {
         $request->validate([
-            'musor_id' => 'required|exists:vizsgaremek_musorok,id',
+            'musor_id' => 'required|exists:shows,id',
             'ertekeles' => 'required|in:1,2,3,4,5',
         ]);
-        $ertekeles = VizsgaremekErtekeles::where('user_id', auth()->id())
+
+        $ertekeles = VizsgaRatings::where('user_id', auth()->id())
             ->where('musor_id', $request->musor_id)
             ->first();
 
@@ -449,13 +321,14 @@ class VizsgaremekController extends Controller
             $ertekeles->ertekeles = $request->ertekeles;
             $ertekeles->save();
         } else {
-            $ertekeles = new VizsgaremekErtekeles();
+            $ertekeles = new VizsgaRatings();
             $ertekeles->musor_id = $request->musor_id;
             $ertekeles->ertekeles = $request->ertekeles;
             $ertekeles->user_id = auth()->id();
             $ertekeles->save();
         }
-        $averageRating = VizsgaremekErtekeles::where('musor_id', $request->musor_id)->avg('ertekeles');
+
+        $averageRating = VizsgaRatings::where('musor_id', $request->musor_id)->avg('ertekeles');
 
         $musor = VizsgaShows::find($request->musor_id);
         $musor->user_rating = floor($averageRating); 
@@ -470,7 +343,7 @@ class VizsgaremekController extends Controller
             'hozzaszolas' => 'required|string'
         ]);
     
-        $hozzaszolas = new VizsgaremekHozzaszolas();
+        $hozzaszolas = new VizsgaComments();
         $hozzaszolas->hozzaszolas = $request->hozzaszolas;
         $hozzaszolas->user_id = Auth::id();
         $hozzaszolas->musor_id = $musor_id;
@@ -485,7 +358,7 @@ class VizsgaremekController extends Controller
             'hozzaszolas' => 'required|string'
         ]);
     
-        $comment = VizsgaremekHozzaszolas::findOrFail($hozzaszolas_id);
+        $comment = VizsgaComments::findOrFail($hozzaszolas_id);
         
         if ($comment->user_id !== Auth::id()) {
             return response()->json(['error' => 'Unauthorized'], 403);
@@ -499,7 +372,7 @@ class VizsgaremekController extends Controller
 
     public function KommentTorles(Request $request, $hozzaszolas_id)
     {
-        $comment = VizsgaremekHozzaszolas::findOrFail($hozzaszolas_id);
+        $comment = VizsgaComments::findOrFail($hozzaszolas_id);
         
         if ($comment->user_id !== Auth::id()) {
             return response()->json(['error' => 'Unauthorized'], 403);

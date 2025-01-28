@@ -3,11 +3,12 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\TestAPIController;
 use App\Http\Controllers\VizsgaremekController;
 use App\Http\Controllers\BingoController;
+use App\Http\Controllers\VizsgaController;
+use App\Http\Controllers\AuthController;
 
 Route::controller(TestAPIController::class)->group(function () { 
     Route::get('/testapi','TestAPI')->name('testapi');
 });
-
 
 Route::controller(BingoController::class)->group(function () {
     Route::get('/bingo/bingo','bingo')->name('bingo');
@@ -23,20 +24,7 @@ Route::controller(VizsgaremekController::class)->group(function () {
     Route::get('/vizsgaremek/fooldal', 'Fooldal')->name('fooldal');
 });
 
-// Route::group(['middleware' => 'auth'], function () {
-//     Route::controller(VizsgaremekController::class)->group(function () {
-//         Route::get('/vizsgaremek/kijelentkezes', 'Kijelentkezes')->name('kijelentkezes');
-//         Route::get('/vizsgaremek/jelszo-valtoztatas', 'JelszoValtoztatas')->name('valtoztatas');
-//         Route::post('/vizsgaremek/jelszo-valtoztatas', 'JelszoValtoztatasMentes')->name('valtoztatas-mentes');
-//         Route::get('/vizsgaremek/profil', 'Profil')->name('profil');
-//         Route::post('/vizsgaremek/profil/nev-valtoztatas', 'NevValtoztatas')->name('nev.valtoztatas');
-//     });
-// });
-
-
 Route::middleware(['auth'])->group(function () {
-    
-    
     Route::controller(VizsgaremekController::class)->group(function () {
         Route::get('/vizsgaremek/kijelentkezes', 'Kijelentkezes')->name('kijelentkezes');
         Route::get('/vizsgaremek/jelszo-valtoztatas', 'JelszoValtoztatas')->name('valtoztatas');
@@ -54,7 +42,23 @@ Route::middleware(['auth'])->group(function () {
         Route::post('/vizsgaremek/musorok/hozzaszolas/{musor_id}', 'Hozzaszolas')->name('hozzaszolas');
         Route::post('/vizsgaremek/musorok/hozzaszolas/szerkesztes/{hozzaszolas_id}', 'KommentSzerkesztes')->name('hozzaszolas.szerkesztes');
         Route::post('/vizsgaremek/musorok/hozzaszolas/torles/{hozzaszolas_id}', 'KommentTorles')->name('hozzaszolas.torles');
-        Route::post('/vizsgaremek/musor/{musor_id}/hozzaszolas', [vizsgaremekController::class, 'Hozzaszolas'])->name('hozzaszolas.store')->middleware('auth');        
+        Route::post('/vizsgaremek/musor/{musor_id}/hozzaszolas', [VizsgaremekController::class, 'Hozzaszolas'])->name('hozzaszolas.store')->middleware('auth');        
     });
-    
+});
+
+
+
+Route::controller(VizsgaController::class)->group(function () {
+    Route::get('/vizsga/regisztracio', 'Regisztracio')->name('vizsga.regisztracio');
+    Route::post('/vizsga/regisztralas', 'Regisztralas')->name('vizsga.regisztralas');
+    Route::get('/vizsga/login', 'Login')->name('vizsga.login');
+    Route::post('/vizsga/bejelentkezes', 'Bejelentkezes')->name('vizsga.bejelentkezes');
+    Route::get('/vizsga/kijelentkezes', 'Kijelentkezes')->name('vizsga.kijelentkezes');
+
+});
+
+Route::middleware(['auth'])->group(function () {
+    Route::controller(VizsgaController::class)->group(function () {
+        Route::get('/vizsga/dashboard', 'Dashboard')->name('vizsga.dashboard');
+    });
 });

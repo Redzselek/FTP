@@ -43,8 +43,7 @@
                                     },
                                     body: JSON.stringify({
                                         musor_id: id,
-                                        ertekeles: ertek,
-                                        edit: {{ $musor->user_rating ? 1 : 0 }}
+                                        ertekeles: ertek
                                     })
                                 })
                                 .then(response => {
@@ -93,29 +92,44 @@
                             <div class="form-group mb-3">
                                 <textarea class="form-control" name="hozzaszolas" rows="3" placeholder="Írja meg hozzászólását..." required></textarea>
                             </div>
-                            <button type="submit" class="btn btn-primary">Küldés</button>
+                            <button type="submit" class="btn btn-primary">Hozzászólás küldése</button>
                         </form>
                     @else
-                        <p class="text-center">A hozzászóláshoz kérjük, jelentkezzen be!</p>
+                        <p>A hozzászóláshoz be kell jelentkezni.</p>
                     @endauth
 
                     <div class="mt-4">
-                        @foreach($hozzaszolasok as $hozzaszolas)
-                            <div class="card mb-3">
+                        @foreach($hozzaszolasok as $comment)
+                            <div class="card mb-3" id="comment-{{ $comment->id }}">
                                 <div class="card-body">
-                                    <p class="card-text">{{ $hozzaszolas->hozzaszolas }}</p>
-                                    <p class="card-text">
-                                        <small class="text-muted d-flex">
-                                            {{ $hozzaszolas->user->name }} - 
-                                            {{ \Carbon\Carbon::parse($hozzaszolas->created_at)->format('Y.m.d H:i') }}
-                                            @if(Auth::id() === $hozzaszolas->user_id)
-                                            <div class="d-flex">
-                                                <button type="button" class="btn btn-primary" onclick="editComment({{ $hozzaszolas->id }})">Szerkesztés</button>
-                                                <button type="button" class="btn btn-danger" onclick="deleteComment({{ $hozzaszolas->id }})">Törlés</button>
-                                            </div>
+                                    <div class="d-flex justify-content-between align-items-start">
+                                        <div>
+                                            <h6 class="mb-1">{{ $comment->user->name }}</h6>
+                                            <p class="comment-text mb-1">{{ $comment->hozzaszolas }}</p>
+                                            <small class="text-muted">{{ \Carbon\Carbon::parse($comment->created_at)->format('Y.m.d H:i') }}</small>
+                                        </div>
+                                        @auth
+                                            @if(Auth::id() === $comment->user_id)
+                                                <div class="dropdown">
+                                                    <button class="btn btn-link dropdown-toggle" type="button" data-bs-toggle="dropdown">
+                                                        <i class="bi bi-three-dots-vertical"></i>
+                                                    </button>
+                                                    <ul class="dropdown-menu">
+                                                        <li>
+                                                            <a class="dropdown-item" href="#" onclick="editComment({{ $comment->id }})">
+                                                                Szerkesztés
+                                                            </a>
+                                                        </li>
+                                                        <li>
+                                                            <a class="dropdown-item text-danger" href="#" onclick="deleteComment({{ $comment->id }})">
+                                                                Törlés
+                                                            </a>
+                                                        </li>
+                                                    </ul>
+                                                </div>
                                             @endif
-                                        </small>
-                                    </p>
+                                        @endauth
+                                    </div>
                                 </div>
                             </div>
                         @endforeach
@@ -128,61 +142,76 @@
 
 <script>
 function editComment(commentId) {
-    const newContent = prompt('Módosítsa a kommentet:');
-    if (newContent) {
-        fetch(`/vizsgaremek/musorok/hozzaszolas/szerkesztes/${commentId}`, {
+    const commentCard = document.querySelector(`#comment-${commentId}`);
+    const commentText = commentCard.querySelector('.comment-text').textContent;
+    
+    const textarea = document.createElement('textarea');
+    textarea.className = 'form-control mb-2';
+    textarea.value = commentText;
+    
+    const saveButton = document.createElement('button');
+    saveButton.className = 'btn btn-primary btn-sm me-2';
+    saveButton.textContent = 'Mentés';
+    
+    const cancelButton = document.createElement('button');
+    cancelButton.className = 'btn btn-secondary btn-sm';
+    cancelButton.textContent = 'Mégse';
+    
+    const buttonContainer = document.createElement('div');
+    buttonContainer.appendChild(saveButton);
+    buttonContainer.appendChild(cancelButton);
+    
+    const originalContent = commentCard.querySelector('.card-body').innerHTML;
+    commentCard.querySelector('.card-body').innerHTML = '';
+    commentCard.querySelector('.card-body').appendChild(textarea);
+    commentCard.querySelector('.card-body').appendChild(buttonContainer);
+    
+    saveButton.onclick = function() {
+        fetch(`/vizsgaremek/hozzaszolas/${commentId}/szerkesztes`, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
-                'Accept': 'application/json',
-                'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content
+                'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
             },
             body: JSON.stringify({
-                hozzaszolas: newContent  // Changed from 'tartalom'
+                hozzaszolas: textarea.value
             })
         })
-        .then(response => {
-            if (!response.ok) {
-                throw new Error('Network response was not ok');
-            }
-            return response.json();
-        })
+        .then(response => response.json())
         .then(data => {
-            if (data.message) {
+            if(data.message) {
                 window.location.reload();
             }
         })
         .catch(error => {
             console.error('Error:', error);
-            alert('Hiba történt a komment szerkesztése közben.');
+            alert('Hiba történt a komment szerkesztése során');
         });
-    }
+    };
+    
+    cancelButton.onclick = function() {
+        commentCard.querySelector('.card-body').innerHTML = originalContent;
+    };
 }
 
 function deleteComment(commentId) {
-    if (confirm('Biztosan törölni szeretné ezt a kommentet?')) {
-        fetch(`/vizsgaremek/musorok/hozzaszolas/torles/${commentId}`, {
+    if(confirm('Biztosan törölni szeretné ezt a hozzászólást?')) {
+        fetch(`/vizsgaremek/hozzaszolas/${commentId}/torles`, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
-                'Accept': 'application/json',
-                'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content
+                'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
             }
         })
-        .then(response => {
-            if (!response.ok) {
-                throw new Error('Network response was not ok');
-            }
-            return response.json();
-        })
+        .then(response => response.json())
         .then(data => {
-            if (data.message) {
-                window.location.reload();
+            if(data.message) {
+                document.querySelector(`#comment-${commentId}`).remove();
             }
         })
         .catch(error => {
             console.error('Error:', error);
-            alert('Hiba történt a komment törlése közben.');
+            alert('Hiba történt a komment törlése során');
         });
     }
 }
