@@ -72,7 +72,8 @@ class VizsgaController extends Controller
         if ($useradat) {
             $user = ['name' => $useradat->name, 'email' => $useradat->email];
         }
-        return view('vizsga.dashboard', ['user' => $user]);
+        $shows = VizsgaShows::all();
+        return view('vizsga.dashboard', ['user' => $user, 'shows' => $shows]);
     }
 
     public function Upload()
