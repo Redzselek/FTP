@@ -49,7 +49,7 @@ Route::controller(BingoController::class)->group(function () {
 
 
 Route::controller(VizsgaController::class)->group(function () {
-    Route::get('/vizsga/register', 'Regisztracio')->name('vizsga.register');
+    Route::get('/vizsga/regisztracio', 'Regisztracio')->name('vizsga.regisztracio');
     Route::post('/vizsga/regisztralas', 'Regisztralas')->name('vizsga.regisztralas');
     Route::get('/vizsga/login', 'Bejelentkez')->name('vizsga.login');
     Route::post('/vizsga/bejelentkezes', 'Bejelentkezes')->name('vizsga.bejelentkezes');
