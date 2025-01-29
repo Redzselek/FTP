@@ -5,6 +5,13 @@ use App\Http\Controllers\VizsgaremekController;
 use App\Http\Controllers\BingoController;
 use App\Http\Controllers\VizsgaController;
 use App\Http\Controllers\AuthController;
+use App\Http\Controllers\SanctumTestController;
+
+// Sanctum Authentication Routes
+Route::get('/sanctum/login', [SanctumTestController::class, 'showLoginForm'])->name('login');
+Route::post('/sanctum/login', [SanctumTestController::class, 'login']);
+Route::get('/sanctum/dashboard', [SanctumTestController::class, 'dashboard'])->middleware('auth:sanctum')->name('dashboard');
+Route::post('/sanctum/logout', [SanctumTestController::class, 'logout'])->middleware('auth:sanctum');
 
 Route::controller(TestAPIController::class)->group(function () { 
     Route::get('/testapi','TestAPI')->name('testapi');
@@ -63,4 +70,13 @@ Route::middleware(['auth'])->group(function () {
         Route::get('/vizsga/upload', 'Upload')->name('vizsga.upload.form');
         Route::post('/vizsga/uploadmanager', 'UploadManager')->name('vizsga.uploadManager');
     });
+});
+
+// Sanctum test routes
+Route::get('/sanctum', [SanctumTestController::class, 'showLoginForm'])->name('sanctum.login.form');
+Route::post('/sanctum-test/login', [SanctumTestController::class, 'login'])->name('sanctum.login');
+
+Route::middleware(['auth:sanctum'])->group(function () {
+    Route::get('/sanctum-test/dashboard', [SanctumTestController::class, 'dashboard'])->name('sanctum.dashboard');
+    Route::post('/sanctum-test/logout', [SanctumTestController::class, 'logout'])->name('sanctum.logout');
 });

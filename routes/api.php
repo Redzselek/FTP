@@ -1,4 +1,4 @@
 <?php
-use App\Http\Controllers\MovieController;
+use App\Http\Controllers\VizsgaController;
 
-Route::apiResource('movies', MovieController::class);
+Route::apiResource('vizsga', VizsgaController::class);
