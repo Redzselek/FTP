@@ -16,6 +16,28 @@ class SanctumTestController extends Controller
         return view('sanctum-test.login');
     }
 
+    public function register(Request $request)
+    {
+        $request->validate([
+            'name' => 'required|string|max:255',
+            'email' => 'required|string|email|max:255|unique:users',
+            'password' => 'required|string|min:8',
+        ]);
+
+        $user = User::create([
+            'name' => $request->name,
+            'email' => $request->email,
+            'password' => Hash::make($request->password),
+        ]);
+
+        $token = $user->createToken('auth-token')->plainTextToken;
+
+        return response()->json([
+            'token' => $token,
+            'user' => $user
+        ], 201);
+    }
+
     public function login(Request $request)
     {
         $request->validate([
@@ -26,16 +48,29 @@ class SanctumTestController extends Controller
         $user = User::where('email', $request->email)->first();
 
         if (!$user || !Hash::check($request->password, $user->password)) {
-            return back()->withErrors([
+            throw ValidationException::withMessages([
                 'email' => ['A megadott adatok helytelenek.'],
             ]);
         }
 
-        // Create token and authenticate the user
-        $token = $user->createToken('test-token')->plainTextToken;
-        Auth::guard('web')->login($user);
-        session(['api_token' => $token, 'user' => $user]);
-        return redirect()->route('dashboard');
+        $token = $user->createToken('auth-token')->plainTextToken;
+
+        return response()->json([
+            'token' => $token,
+            'user' => $user
+        ]);
+    }
+
+    public function user(Request $request)
+    {
+        return response()->json($request->user());
+    }
+
+    public function logout(Request $request)
+    {
+        $request->user()->currentAccessToken()->delete();
+        
+        return response()->json(['message' => 'Logged out successfully']);
     }
 
     public function dashboard()
@@ -52,20 +87,5 @@ class SanctumTestController extends Controller
             'message' => 'You are authenticated!',
             'user' => auth()->user()
         ]);
-    }
-
-    public function logout(Request $request)
-    {
-        // Revoke all tokens if they exist
-        if ($request->user()) {
-            $request->user()->tokens()->delete();
-        }
-        
-        // Clear the web guard session
-        Auth::guard('web')->logout();
-        $request->session()->invalidate();
-        $request->session()->regenerateToken();
-        
-        return redirect()->route('login');
     }
 }
