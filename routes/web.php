@@ -8,10 +8,10 @@ use App\Http\Controllers\AuthController;
 use App\Http\Controllers\SanctumTestController;
 
 // Sanctum Authentication Routes
-Route::get('/sanctum/login', [SanctumTestController::class, 'showLoginForm'])->name('login');
-Route::post('/sanctum/login', [SanctumTestController::class, 'login']);
-Route::get('/sanctum/dashboard', [SanctumTestController::class, 'dashboard'])->middleware('auth:sanctum')->name('dashboard');
-Route::post('/sanctum/logout', [SanctumTestController::class, 'logout'])->middleware('auth:sanctum');
+// Route::get('/sanctum/login', [SanctumTestController::class, 'showLoginForm'])->name('login');
+// Route::post('/sanctum/login', [SanctumTestController::class, 'login']);
+// Route::get('/sanctum/dashboard', [SanctumTestController::class, 'dashboard'])->middleware('auth:sanctum')->name('dashboard');
+// Route::post('/sanctum/logout', [SanctumTestController::class, 'logout'])->middleware('auth:sanctum');
 
 Route::controller(TestAPIController::class)->group(function () { 
     Route::get('/testapi','TestAPI')->name('testapi');
@@ -53,30 +53,29 @@ Route::controller(BingoController::class)->group(function () {
 //     });
 // });
 
-
-
 Route::controller(VizsgaController::class)->group(function () {
-    Route::get('/vizsga/regisztracio', 'Regisztracio')->name('vizsga.regisztracio');
-    Route::post('/vizsga/regisztralas', 'Regisztralas')->name('vizsga.regisztralas');
-    Route::get('/vizsga/login', 'Bejelentkez')->name('vizsga.login');
-    Route::post('/vizsga/bejelentkezes', 'Bejelentkezes')->name('vizsga.bejelentkezes');
-    Route::get('/vizsga/kijelentkezes', 'Kijelentkezes')->name('vizsga.kijelentkezes');
+    // Nyilvános útvonalak
+    Route::get('/vizsga/login', 'Bejelentkez')->name('vizsga.bejelentkez');
+    Route::post('/vizsga/login', 'Bejelentkezes')->name('vizsga.bejelentkezes');
+    Route::get('/vizsga/register', 'Regisztracio')->name('vizsga.regisztracio');
+    Route::post('/vizsga/register', 'Regisztralas')->name('vizsga.regisztralas');
+    Route::get('/vizsga/forgot-password', 'ElfelejtettJelszoView')->name('vizsga.password.request');
+    Route::post('/vizsga/forgot-password', 'ElfelejtettJelszo')->name('vizsga.password.email');
+    Route::get('/vizsga/movies', 'MoviesView')->name('vizsga.movies');
+    Route::get('/vizsga/series', 'SeriesView')->name('vizsga.series');
 
-});
-
-Route::middleware(['auth'])->group(function () {
-    Route::controller(VizsgaController::class)->group(function () {
+    // Védett útvonalak
+    Route::middleware(['auth'])->group(function () {
         Route::get('/vizsga/dashboard', 'Dashboard')->name('vizsga.dashboard');
+        Route::post('/vizsga/logout', 'Kijelentkezes')->name('vizsga.kijelentkezes');
+        Route::get('/vizsga/profile', 'ProfilView')->name('vizsga.profile');
+        Route::post('/vizsga/profile/password', 'JelszoValtoztatas')->name('vizsga.password');
+        Route::post('/vizsga/profile/delete', 'FiokTorles')->name('vizsga.profile.delete');
         Route::get('/vizsga/upload', 'Upload')->name('vizsga.upload.form');
         Route::post('/vizsga/uploadmanager', 'UploadManager')->name('vizsga.uploadManager');
+        Route::get('/vizsga/feltoltesek', 'FeltoltesekView')->name('vizsga.feltoltesek');
+        Route::post('/vizsga/show/edit', 'ShowSzerkesztes')->name('vizsga.show.edit');
+        Route::post('/vizsga/show/delete', 'ShowTorles')->name('vizsga.show.delete');
+        Route::get('/vizsga/watchlist', 'WatchlistView')->name('vizsga.watchlist');
     });
-});
-
-// Sanctum test routes
-Route::get('/sanctum', [SanctumTestController::class, 'showLoginForm'])->name('sanctum.login.form');
-Route::post('/sanctum-test/login', [SanctumTestController::class, 'login'])->name('sanctum.login');
-
-Route::middleware(['auth:sanctum'])->group(function () {
-    Route::get('/sanctum-test/dashboard', [SanctumTestController::class, 'dashboard'])->name('sanctum.dashboard');
-    Route::post('/sanctum-test/logout', [SanctumTestController::class, 'logout'])->name('sanctum.logout');
 });

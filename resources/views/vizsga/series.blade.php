@@ -1,17 +1,11 @@
 @extends('vizsga.layouts.app')
 
-@section('title', 'Dashboard')
+@section('title', 'Sorozatok')
 
 @section('content')
 <div class="container mt-4">
-    <div class="d-flex justify-content-between align-items-center mb-4">
-        
-        <div>
-            <a href="{{ route('vizsga.upload.form') }}" class="btn btn-primary me-2">Új film feltöltése</a>
-            <a href="{{ route('vizsga.kijelentkezes') }}" class="btn btn-danger">Kijelentkezés</a>
-        </div>
-    </div>
-
+    <h1 class="mb-4">Sorozatok</h1>
+    
     <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4">
         @foreach($shows as $show)
         <div class="col">
@@ -23,7 +17,6 @@
                     <p class="card-text">{{ $show->description }}</p>
                     <div class="d-flex justify-content-between align-items-center mt-3">
                         <span class="badge text-bg-primary">{{ $show->category }}</span>
-                        <span class="badge text-bg-secondary">{{ ucfirst($show->type) }}</span>
                     </div>
                 </div>
             </div>
