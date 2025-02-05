@@ -7,11 +7,6 @@ use App\Http\Controllers\VizsgaController;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\SanctumTestController;
 
-// Sanctum Authentication Routes
-// Route::get('/sanctum/login', [SanctumTestController::class, 'showLoginForm'])->name('login');
-// Route::post('/sanctum/login', [SanctumTestController::class, 'login']);
-// Route::get('/sanctum/dashboard', [SanctumTestController::class, 'dashboard'])->middleware('auth:sanctum')->name('dashboard');
-// Route::post('/sanctum/logout', [SanctumTestController::class, 'logout'])->middleware('auth:sanctum');
 
 Route::controller(TestAPIController::class)->group(function () { 
     Route::get('/testapi','TestAPI')->name('testapi');
@@ -79,3 +74,7 @@ Route::controller(VizsgaController::class)->group(function () {
         Route::get('/vizsga/watchlist', 'WatchlistView')->name('vizsga.watchlist');
     });
 });
+
+Route::post('/api/register', [AuthController::class, 'register']);
+Route::post('/api/login', [AuthController::class, 'login']);
+Route::post('/api/logout', [AuthController::class, 'logout'])->middleware('auth:sanctum');

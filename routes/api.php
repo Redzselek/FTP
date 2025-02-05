@@ -4,6 +4,10 @@ use App\Http\Controllers\SanctumTestController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
+Route::get('/sanctum/csrf-cookie', function () {
+    return response()->json(['message' => 'CSRF cookie set']);
+});
+
 // Route::post('/sanctum-teszt/login', [SanctumTestController::class, 'login']);
 // Route::post('/register', [SanctumTestController::class, 'register']);
 

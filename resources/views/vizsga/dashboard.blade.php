@@ -8,7 +8,6 @@
         
         <div>
             <a href="{{ route('vizsga.upload.form') }}" class="btn btn-primary me-2">Új film feltöltése</a>
-            <a href="{{ route('vizsga.kijelentkezes') }}" class="btn btn-danger">Kijelentkezés</a>
         </div>
     </div>
 
