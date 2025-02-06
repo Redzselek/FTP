@@ -1,6 +1,7 @@
 <?php
 
 return [
+
     /*
     |--------------------------------------------------------------------------
     | Stateful Domains
@@ -8,7 +9,7 @@ return [
     |
     | Requests from the following domains / hosts will receive stateful API
     | authentication cookies. Typically, these should include your local
-    | and production domains which access your API via a frontend SPA.
+    | and production domains / hosts.
     |
     */
 
@@ -25,8 +26,8 @@ return [
     |
     | This array contains the authentication guards that will be checked when
     | Sanctum is trying to authenticate a request. If none of these guards
-    | are able to authenticate the request, Sanctum will use the bearer
-    | token that's present on an incoming request for authentication.
+    | are able to authenticate the request, Sanctum will use the default
+    | guard defined in your "auth" configuration file.
     |
     */
 
@@ -38,8 +39,8 @@ return [
     |--------------------------------------------------------------------------
     |
     | This value controls the number of minutes until an issued token will be
-    | considered expired. This will override any values set in the token's
-    | "expires_at" attribute, but first-party sessions are not affected.
+    | considered expired. If you want tokens to never expire, you can set
+    | this value to null.
     |
     */
 
@@ -47,25 +48,13 @@ return [
 
     /*
     |--------------------------------------------------------------------------
-    | Token Prefix
-    |--------------------------------------------------------------------------
-    |
-    | Sanctum can prefix new tokens in order to take advantage of various
-    | security scanning initiatives maintained by open source platforms
-    | that alert developers if they commit tokens into repositories.
-    |
-    */
-
-    'token_prefix' => env('SANCTUM_TOKEN_PREFIX', ''),
-
-    /*
-    |--------------------------------------------------------------------------
     | Sanctum Middleware
     |--------------------------------------------------------------------------
     |
-    | When authenticating your first-party SPA with Sanctum you may need to
-    | customize some of the middleware Sanctum uses while processing the
-    | request. You may change the middleware listed below as required.
+    | When authentication is attempted, the following middleware class will be
+    | used to retrieve the authenticated user. Of course, you may extend or
+    | replace this middleware with your own. The Sanctum middleware must
+    | always be last in the middleware stack.
     |
     */
 
@@ -73,4 +62,5 @@ return [
         'verify_csrf_token' => App\Http\Middleware\VerifyCsrfToken::class,
         'encrypt_cookies' => App\Http\Middleware\EncryptCookies::class,
     ],
+
 ];
