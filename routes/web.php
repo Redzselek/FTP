@@ -6,6 +6,9 @@ use App\Http\Controllers\BingoController;
 use App\Http\Controllers\VizsgaController;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\SanctumTestController;
+use Illuminate\Support\Facades\File;
+use Illuminate\Support\Facades\Response;
+use Illuminate\Support\Facades\Route;
 
 
 Route::controller(TestAPIController::class)->group(function () { 
@@ -78,3 +81,7 @@ Route::controller(VizsgaController::class)->group(function () {
 Route::post('/api/register', [AuthController::class, 'register']);
 Route::post('/api/login', [AuthController::class, 'login']);
 Route::post('/api/logout', [AuthController::class, 'logout'])->middleware('auth:sanctum');
+
+Route::get('frontend/{any?}', function () {
+    return file_get_contents(public_path('frontend/index.html'));
+})->where('any', '.*');
