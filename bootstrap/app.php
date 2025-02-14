@@ -15,6 +15,10 @@ return Application::configure(basePath: dirname(__DIR__))
             'auth' => \App\Http\Middleware\Authenticate::class,
             'sanctum' => \Laravel\Sanctum\Http\Middleware\EnsureFrontendRequestsAreStateful::class,
         ]);
+        $middleware->statefulApi();
+        $middleware->validateCsrfTokens(
+            except: ['vizsga/*']
+        );
         
     })
     ->withExceptions(function (Exceptions $exceptions) {
