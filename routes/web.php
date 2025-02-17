@@ -1,18 +1,14 @@
 <?php
 use App\Http\Controllers\TestAPIController;
-use App\Http\Controllers\VizsgaremekController;
 use App\Http\Controllers\BingoController;
 use App\Http\Controllers\VizsgaController;
 use App\Http\Controllers\AuthController;
-use App\Http\Controllers\SanctumTestController;
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Response;
 use Illuminate\Support\Facades\Route;
 
 Route::post('/testapi', [TestAPIController::class, 'TestAPI'])->name('testapi');
 Route::post('/bingo/bingo', [BingoController::class, 'bingo'])->name('bingo');
-
-
 
 
 Route::post('/vizsga/login', [VizsgaController::class, 'Bejelentkezes']);
