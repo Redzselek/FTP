@@ -14,6 +14,7 @@ use App\Models\VizsgaLevel;
 use App\Models\VizsgaWatchlist;
 use Exception;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Cookie;
 
 class VizsgaController extends Controller
 {
@@ -71,15 +72,13 @@ class VizsgaController extends Controller
             }
 
             $token = $user->createToken('auth_token')->plainTextToken;
+            $cookie = cookie('jwt', $token,  24 * 60); // 1 day
 
             return response()->json([
                 'status' => 'success',
                 'message' => 'Sikeres bejelentkezés',
-                'data' => [
-                    'user' => $user,
-                    'token' => $token
-                ]
-            ]);
+                'token' => $token
+            ])->withCookie($cookie);
         } catch (Exception $e) {
             return response()->json([
                 'status' => 'error',
@@ -92,13 +91,13 @@ class VizsgaController extends Controller
     public function Kijelentkezes()
     {
         try {
+            $cookie = Cookie::forget('jwt');
             auth()->user()->tokens()->delete();
             Auth::logout();
-
             return response()->json([
                 'status' => 'success',
                 'message' => 'Sikeres kijelentkezés'
-            ]);
+            ])->withCookie($cookie);
         } catch (Exception $e) {
             return response()->json([
                 'status' => 'error',
@@ -270,12 +269,26 @@ class VizsgaController extends Controller
         }
     }
 
-    public function FeltoltesekView()
+    public function FeltoltesekView(Request $request)
     {
         try {
-            $user = Auth::user();
-            $shows = VizsgaShows::where('user_id', $user->id)->get();
+            $jwt = Cookie::get('jwt');
+            if (!$jwt) {
+                return response()->json([
+                    'status' => 'error',
+                    'message' => 'Nem vagy bejelentkezve'
+                ], 401);
+            }
 
+            $user = Auth::user();
+            if (!$user) {
+                return response()->json([
+                    'status' => 'error',
+                    'message' => 'Érvénytelen hitelesítés'
+                ], 401);
+            }
+
+            $shows = VizsgaShows::where('user_id', $user->id)->get();
             return response()->json([
                 'status' => 'success',
                 'data' => [
