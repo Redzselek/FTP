@@ -1,16 +1,14 @@
 <?php
-// use App\Http\Controllers\TestAPIController;
+
 use App\Http\Controllers\BingoController;
 use App\Http\Controllers\BirdController;
 use App\Http\Controllers\VizsgaController;
-// use App\Http\Controllers\AuthController;
+
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Response;
 use Illuminate\Support\Facades\Route;
 
-Route::post('/testapi', [TestAPIController::class, 'TestAPI'])->name('testapi');
 Route::post('/bingo/bingo', [BingoController::class, 'bingo'])->name('bingo');
-
 Route::get('/bird', [BirdController::class, 'index']);
 
 Route::post('/vizsga/login', [VizsgaController::class, 'Bejelentkezes'])->name('vizsga.bejelentkez');;
@@ -21,7 +19,7 @@ Route::get('/vizsga/series', [VizsgaController::class, 'SeriesView']);
 Route::get('/vizsga/dashboard', [VizsgaController::class, 'Dashboard']);
 Route::post('/vizsga/feltoltesek', [VizsgaController::class, 'FeltoltesekView']);
 
-Route::get('/vizsga/user', [VizsgaController::class, 'user']);
+Route::get('/vizsga/user/{id}', [VizsgaController::class, 'user']);
 
 Route::middleware('auth:sanctum')->group(function () {
     Route::post('/vizsga/logout', [VizsgaController::class, 'Kijelentkezes']);

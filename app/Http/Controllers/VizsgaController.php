@@ -68,19 +68,21 @@ class VizsgaController extends Controller
         return response()->json([
             'status' => 'success',
             'message' => 'Sikeres bejelentkezés',
-            'token' => $token
+            'token' => $token,
+            'user' => $user
         ])->withCookie($cookie);
     }
 
     public function Kijelentkezes()
     {
         $cookie = Cookie::forget('jwt');
-        auth()->user()->tokens()->delete();
+        // auth()->user()->tokens()->delete();
         Auth::logout();
         return response()->json([
             'status' => 'success',
             'message' => 'Sikeres kijelentkezés'
         ])->withCookie($cookie);
+        
     }
 
     public function Dashboard()
@@ -244,7 +246,6 @@ class VizsgaController extends Controller
 
         $show = VizsgaShows::findOrFail($request->id);
         
-        // Check if the user owns this show
         if ($show->user_id !== Auth::id()) {
             return response()->json([
                 'status' => 'error',
@@ -328,7 +329,11 @@ class VizsgaController extends Controller
         ]);
     }
 
-    public function user(){
-        return Auth::user();
+    public function user(Request $request){
+        Auth::check();
+        return response()->json([
+            'data' => Auth::check(),
+            'aas' => Auth::user(),
+        ]);
     }
 }
