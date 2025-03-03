@@ -55,7 +55,7 @@ class VizsgaUserApiController extends Controller{
         auth()->guard('web')->logout();
         $request->session()->invalidate();
         $request->session()->regenerateToken();
-        $request->user()->tokens()->delete();
+        // $request->user()->tokens()->delete();
         return response([
             "message" => "Success"
         ])->withCookie($cookie);

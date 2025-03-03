@@ -23,19 +23,12 @@ Route::post('/vizsga-api/register', [VizsgaUserApiController::class, 'Register']
 Route::post('/vizsga-api/logout', [VizsgaUserApiController::class, 'Logout']);
 Route::get('/vizsga-api/user', [VizsgaUserApiController::class, 'User']);
 
-Route::post('/vizsga-api/upload', [VizsgaFileApiController::class, 'UploadManager']);
 
-
-
-
-
-
-
-
-
-
-
-
+Route::middleware('auth:sanctum')->group(function () {
+    Route::post('/vizsga-api/upload-show', [VizsgaFileApiController::class, 'UploadShow']);
+    Route::post('/vizsga-api/update-show', [VizsgaFileApiController::class, 'UpdateShow']);
+    Route::post('/vizsga-api/delete-show', [VizsgaFileApiController::class, 'DeleteShow']);
+});
 
 
 
