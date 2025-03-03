@@ -4,6 +4,8 @@ use App\Http\Controllers\BingoController;
 use App\Http\Controllers\BirdController;
 use App\Http\Controllers\VizsgaController;
 use App\Http\Controllers\VizsgaUserApiController;
+use App\Http\Controllers\VizsgaFileApiController;
+use App\Http\Controllers\VizsgaWatchlistApiController;
 
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Response;
@@ -28,6 +30,15 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::post('/vizsga-api/upload-show', [VizsgaFileApiController::class, 'UploadShow']);
     Route::post('/vizsga-api/update-show', [VizsgaFileApiController::class, 'UpdateShow']);
     Route::post('/vizsga-api/delete-show', [VizsgaFileApiController::class, 'DeleteShow']);
+    
+    Route::post('/vizsga-api/get-watchlist', [VizsgaWatchlistApiController::class, 'GetWatchlist']);
+    Route::post('/vizsga-api/add-watchlist/{showid}', [VizsgaWatchlistApiController::class, 'AddWatchlist']);
+    Route::post('/vizsga-api/remove-watchlist/{showid}', [VizsgaWatchlistApiController::class, 'RemoveWatchlist']);
+
+
+
+
+    Route::post('/vizsga-api/watchlist', [VizsgaWatchlistApiController::class, 'Watchlist']);
 });
 
 
