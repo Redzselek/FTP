@@ -19,6 +19,7 @@ use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Cookie;
+use Illuminate\Support\Facades\Validator;
 
 class VizsgaFileApiController extends Controller{
     function UploadShow(Request $request) {
@@ -38,17 +39,17 @@ class VizsgaFileApiController extends Controller{
         ]);
         if ($request->file()) {
             $fileName = time() . '_' . $request->file->getClientOriginalName();
-            $destinationPath = public_path('uploads/vizsgaremek/');
+            $destinationPath = public_path('uploads/vizsga/');
             $request->file('file')->move($destinationPath, $fileName);
 
             $upload = new VizsgaShows();
-            $upload->show_title = $data['title'];
-            $upload->show_description = $data['description'];
-            $upload->show_category = $data['category'];
-            $upload->show_type = $data['type'];
-            $upload->show_season = $data['season'];
-            $upload->show_episode = $data['episode'];
-            $upload->show_url = $fileName;
+            $upload->title = $data['title'];
+            $upload->description = $data['description'];
+            $upload->category = $data['category'];
+            $upload->type = $data['type'];
+            $upload->season = $data['season'];
+            $upload->episode = $data['episode'];
+            $upload->image_url = $fileName;
             $upload->user_id = $user->id;
             // $user->rating = null;
 
@@ -61,7 +62,7 @@ class VizsgaFileApiController extends Controller{
 
     function UpdateShow(Request $request) {
         $request->validate([
-            'id' => 'required|exists:teliprojekt_musorok,id',
+            'id' => 'required|exists:shows,id',
             'title' => 'required|string|max:200',
             'description' => 'required|string',
             'category' => 'required|string|max:20',

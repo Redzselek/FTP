@@ -36,9 +36,6 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::post('/vizsga-api/remove-watchlist/{showid}', [VizsgaWatchlistApiController::class, 'RemoveWatchlist']);
 
 
-
-
-    Route::post('/vizsga-api/watchlist', [VizsgaWatchlistApiController::class, 'Watchlist']);
 });
 
 

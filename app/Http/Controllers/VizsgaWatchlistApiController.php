@@ -25,7 +25,14 @@ class VizsgaWatchlistApiController extends Controller
 
     function GetWatchlist(Request $request)
     {
-        $watchlist = VizsgaWatchlist::where('user_id', Auth::id())->get();
+        $watchlist = VizsgaWatchlist::where('watchlist.user_id', Auth::id())
+            ->join('shows', 'watchlist.show_id', '=', 'shows.id')
+            ->select('watchlist.*', 'shows.title', 'shows.image_url')
+            ->get();
+
+        if ($watchlist->isEmpty()) {
+            return response()->json(['message' => 'Your watchlist is empty'], 404);
+        }
         return response()->json($watchlist);
     }
 
@@ -47,5 +54,10 @@ class VizsgaWatchlistApiController extends Controller
     {
         VizsgaWatchlist::where('user_id', Auth::id())->where('show_id', $showid)->delete();
         return response()->json(['message' => 'Show successfully removed from your watchlist']);
+    }
+
+    function GetShow(Request $request, $showid) {
+        $show = VizsgaWatchlist::where('user_id', Auth::id())->where('show_id', $showid)->get();
+        return response()->json($show);
     }
 }
