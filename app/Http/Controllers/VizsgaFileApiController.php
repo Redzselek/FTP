@@ -112,4 +112,10 @@ class VizsgaFileApiController extends Controller{
         }
         return back()->withErrors('Failed to delete.');
     }
+
+    function SelectedShow(Request $request, $id) {
+        $show = VizsgaShows::find($id);
+        return response()->json($show);
+    }
+
 }

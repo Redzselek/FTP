@@ -20,6 +20,7 @@ Route::get('frontend/{any?}', function () {
     return file_get_contents(public_path('frontend/index.csr.html'));
 })->where('any', '.*');
 
+Route::get('/vizsga-api/dashboard', [VizsgaController::class, 'Dashboard']);
 Route::post('/vizsga-api/login', [VizsgaUserApiController::class, 'Login']);
 Route::post('/vizsga-api/register', [VizsgaUserApiController::class, 'Register']);
 Route::post('/vizsga-api/logout', [VizsgaUserApiController::class, 'Logout']);
@@ -30,7 +31,8 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::post('/vizsga-api/upload-show', [VizsgaFileApiController::class, 'UploadShow']);
     Route::post('/vizsga-api/update-show', [VizsgaFileApiController::class, 'UpdateShow']);
     Route::post('/vizsga-api/delete-show', [VizsgaFileApiController::class, 'DeleteShow']);
-    
+    Route::post('/vizsga-api/selected-show/{id}', [VizsgaFileApiController::class, 'SelectedShow']);
+
     Route::post('/vizsga-api/get-watchlist', [VizsgaWatchlistApiController::class, 'GetWatchlist']);
     Route::post('/vizsga-api/add-watchlist/{showid}', [VizsgaWatchlistApiController::class, 'AddWatchlist']);
     Route::post('/vizsga-api/remove-watchlist/{showid}', [VizsgaWatchlistApiController::class, 'RemoveWatchlist']);
@@ -45,7 +47,6 @@ Route::post('/vizsga/register', [VizsgaController::class, 'Regisztralas']);
 Route::post('/vizsga/forgot-password', [VizsgaController::class, 'ElfelejtettJelszo']);
 Route::get('/vizsga/movies', [VizsgaController::class, 'MoviesView']);
 Route::get('/vizsga/series', [VizsgaController::class, 'SeriesView']);
-Route::get('/vizsga/dashboard', [VizsgaController::class, 'Dashboard']);
 Route::post('/vizsga/feltoltesek', [VizsgaController::class, 'FeltoltesekView']);
 
 Route::get('/vizsga/user/{id}', [VizsgaController::class, 'user']);
