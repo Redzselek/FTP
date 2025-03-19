@@ -6,6 +6,7 @@ use App\Http\Controllers\VizsgaController;
 use App\Http\Controllers\VizsgaUserApiController;
 use App\Http\Controllers\VizsgaFileApiController;
 use App\Http\Controllers\VizsgaWatchlistApiController;
+use App\Http\Controllers\VizsgaRatingApiController;
 
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Response;
@@ -25,7 +26,8 @@ Route::post('/vizsga-api/login', [VizsgaUserApiController::class, 'Login']);
 Route::post('/vizsga-api/register', [VizsgaUserApiController::class, 'Register']);
 Route::post('/vizsga-api/logout', [VizsgaUserApiController::class, 'Logout']);
 Route::get('/vizsga-api/user', [VizsgaUserApiController::class, 'User']);
-
+Route::get('/vizsga-api/get-ratings', [VizsgaRatingApiController::class, 'GetRatings']);
+Route::get('/vizsga-api/get-average-rating', [VizsgaRatingApiController::class, 'GetAverageRating']);
 
 Route::middleware('auth:sanctum')->group(function () {
     Route::post('/vizsga-api/upload-show', [VizsgaFileApiController::class, 'UploadShow']);
@@ -37,8 +39,31 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::post('/vizsga-api/add-watchlist/{showid}', [VizsgaWatchlistApiController::class, 'AddWatchlist']);
     Route::post('/vizsga-api/remove-watchlist/{showid}', [VizsgaWatchlistApiController::class, 'RemoveWatchlist']);
 
+    Route::post('/vizsga-api/add-rating', [VizsgaRatingApiController::class, 'AddRating']);
+    Route::post('/vizsga-api/delete-rating', [VizsgaRatingApiController::class, 'DeleteRating']);
+    
+    
 
+    Route::post('/vizsga-api/asd', [VizsgaRatingApiController::class, 'asd']);
 });
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
