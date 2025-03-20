@@ -28,4 +28,10 @@ class VizsgaRatings extends Model
     {
         return $this->belongsTo(VizsgaShows::class, 'show_id');
     }
+
+    public static function averageRating($showId)
+    {
+        return self::where('show_id', $showId)->avg('rating');
+    }
+    
 }

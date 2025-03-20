@@ -30,26 +30,30 @@ class VizsgaRatingApiController extends Controller{
     function AddRating(Request $request){
         $request->validate([
             'show_id' => 'required',
-            'rating' => 'required   '
+            'rating' => 'required'
         ]);
         
-        $rating = new VizsgaRatings();
-        $rating->user_id = Auth::id();
-        $rating->show_id = $request->show_id;
-        $rating->rating = $request->rating;
-        $rating->save();
+        $userId = Auth::id();
         
-        return response()->json(['success' => true, 'message' => 'Rating successfully added!']);
+        $rating = VizsgaRatings::updateOrCreate(
+            ['user_id' => $userId, 'show_id' => $request->show_id],
+            ['rating' => $request->rating]
+        );
         
-    }
-    function asd(Request $request)
-    {
-        return Auth::id();
+        // Check if this was a new record or an update
+        $wasRecentlyCreated = $rating->wasRecentlyCreated;
+        
+        return response()->json([
+            'success' => true, 
+            'message' => $wasRecentlyCreated ? 'Rating successfully added!' : 'Rating successfully updated!',
+            'action' => $wasRecentlyCreated ? 'created' : 'updated',
+            'rating' => $rating
+        ]);
     }
 
     function DeleteRating(Request $request){
         $request->validate([
-            'show_id' => 'required|exists:vizsga_shows,id'
+            'show_id' => 'required|exists:shows,id'
         ]);
         $rating = VizsgaRatings::where('user_id', Auth::id())
             ->where('show_id', $request->show_id)
@@ -61,5 +65,24 @@ class VizsgaRatingApiController extends Controller{
         } else {
             return response()->json(['success' => false, 'message' => 'Rating not found!']);
         }
+    }
+
+    function GetAverageRating(Request $request) {
+        $request->validate([
+            'show_id' => 'required|exists:shows,id'
+        ]);
+        
+        $avgRating = VizsgaRatings::averageRating($request->show_id);
+        
+        return response()->json([
+            'success' => true,
+            'average_rating' => $avgRating ?? 0
+            // Ezt rövidíti
+            // if ($avgRating === null) {
+            //     $average_rating = 0;
+            // } else {
+            //     $average_rating = $avgRating;
+            // }
+        ]);
     }
 }

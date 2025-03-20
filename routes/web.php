@@ -41,10 +41,7 @@ Route::middleware('auth:sanctum')->group(function () {
 
     Route::post('/vizsga-api/add-rating', [VizsgaRatingApiController::class, 'AddRating']);
     Route::post('/vizsga-api/delete-rating', [VizsgaRatingApiController::class, 'DeleteRating']);
-    
-    
-
-    Route::post('/vizsga-api/asd', [VizsgaRatingApiController::class, 'asd']);
+    Route::post('/vizsga-api/avg-rating', [VizsgaRatingApiController::class, 'GetAverageRating']);
 });
 
 
