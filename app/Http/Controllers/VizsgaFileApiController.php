@@ -24,7 +24,7 @@ use Illuminate\Support\Facades\Validator;
 class VizsgaFileApiController extends Controller{
     function UploadShow(Request $request) {
         $validator = Validator::make($request->all(), [
-            'file' => 'required|image|mimes:jpg,jpeg,png,webp|max:15360'
+            'file' => 'required|image|mimes:jpg,jpeg,png,webp|max:5120'
         ]);
         
         if ($validator->fails()) {
@@ -35,7 +35,7 @@ class VizsgaFileApiController extends Controller{
         
         $data = $request->all();
         $request->validate([
-            'file' => 'required|file|mimes:jpg,jpeg,png,webp|max:15360',
+            'file' => 'required|file|mimes:jpg,jpeg,png,webp|max:5120',
         ]);
         if ($request->file()) {
             $fileName = time() . '_' . $request->file->getClientOriginalName();
@@ -69,7 +69,7 @@ class VizsgaFileApiController extends Controller{
             'type' => 'required|in:film,sorozat',
             'season' => 'required|integer|nullable',
             'episode' => 'required|integer|nullable',
-            'file' => 'nullable|file|mimes:jpg,jpeg,png,webp|max:15360',
+            'file' => 'nullable|file|mimes:jpg,jpeg,png,webp|max:5120',
         ]);
 
         $show = VizsgaShows::where('id', $request->id)
