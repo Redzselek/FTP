@@ -54,10 +54,9 @@ class VizsgaFileApiController extends Controller{
             // $user->rating = null;
 
             $upload->save();
-            return back()
-                ->with('success', 'Successfully uploaded.');
+            return response()->json(['success' => true, 'message' => 'Show uploaded successfully'], 200);
         }
-        return back()->withErrors('Failed to upload.');
+        return response()->json(['success' => false, 'message' => 'Failed to upload.'], 422);
     }
 
     function UpdateShow(Request $request) {
@@ -82,19 +81,19 @@ class VizsgaFileApiController extends Controller{
         $show->type = $request->type;
         $show->season = $request->season;
         $show->episode = $request->episode;
-        $show->file = $request->file;
+        $show->image_url = $request->file;
 
         if ($request->hasFile('file')) {
             // Kép törlés
-            $oldImagePath = public_path('uploads/vizsgaremek/' . $show->img_url);
+            $oldImagePath = public_path('uploads/vizsga/' . $show->image_url);
             if (file_exists($oldImagePath)) {
                 unlink($oldImagePath);
             }
 
             // Új kép feltöltés
             $fileName = time() . '_' . $request->file->getClientOriginalName();
-            $request->file('file')->move(public_path('uploads/vizsgaremek/'), $fileName);
-            $show->kep_url = $fileName;
+            $request->file('file')->move(public_path('uploads/vizsga/'), $fileName);
+            $show->image_url = $fileName;
         }
 
         $show->save();
@@ -107,10 +106,9 @@ class VizsgaFileApiController extends Controller{
         $show = VizsgaShows::find($id);
         if ($show->user_id == $user->id) {
             $show->delete();
-            return back()
-                ->with('success', 'Succesfully deleted.');
+            return response()->json(['success' => true, 'message' => 'Show successfully deleted!']);
         }
-        return back()->withErrors('Failed to delete.');
+        return response()->json(['success' => false, 'message' => 'Failed to delete.'], 422);
     }
 
     function SelectedShow(Request $request, $id) {
