@@ -7,6 +7,7 @@ use App\Http\Controllers\VizsgaUserApiController;
 use App\Http\Controllers\VizsgaFileApiController;
 use App\Http\Controllers\VizsgaWatchlistApiController;
 use App\Http\Controllers\VizsgaRatingApiController;
+use App\Http\Controllers\VizsgaCommentController;
 
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Response;
@@ -39,6 +40,12 @@ Route::middleware('auth:sanctum')->group(function () {
     
     Route::post('/vizsga-api/forgot-password', [VizsgaUserApiController::class, 'ForgotPassword']);
     
+    Route::post('/vizsga-api/get-comments', [VizsgaCommentController::class, 'index']);
+    Route::post('/vizsga-api/get-show-comments', [VizsgaCommentController::class, 'getShowComments']);
+    Route::post('/vizsga-api/save-comment', [VizsgaCommentController::class, 'store']);
+    Route::post('/vizsga-api/update-comment/{id}', [VizsgaCommentController::class, 'update']);
+    Route::post('/vizsga-api/delete-comment/{id}', [VizsgaCommentController::class, 'delete']);
+
     Route::post('/vizsga-api/get-watchlist', [VizsgaWatchlistApiController::class, 'GetWatchlist']);
     Route::post('/vizsga-api/add-watchlist/{showid}', [VizsgaWatchlistApiController::class, 'AddWatchlist']);
     Route::post('/vizsga-api/remove-watchlist/{showid}', [VizsgaWatchlistApiController::class, 'RemoveWatchlist']);
