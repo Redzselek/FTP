@@ -130,4 +130,25 @@ class VizsgaUserApiController extends Controller{
         ]);
     }
 
+    function ShowMovies(Request $request) {
+        $user = $request->user();
+        
+        if (!$user) {
+            return response()->json(['success' => false, 'message' => 'User not authenticated'], 401);
+        }
+        
+        $movies = VizsgaShows::where('type', 'movie')->where('user_id', $user->id)->get();
+        return response()->json($movies);
+    }
+
+    function ShowSeries(Request $request) {
+        $user = $request->user();
+        
+        if (!$user) {
+            return response()->json(['success' => false, 'message' => 'User not authenticated'], 401);
+        }
+        
+        $series = VizsgaShows::where('type', 'series')->where('user_id', $user->id)->get();
+        return response()->json($series);
+    }
 }

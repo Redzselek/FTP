@@ -13,12 +13,12 @@ class VizsgaCommentController extends Controller
         return VizsgaComments::all();
     }
 
-    public function getShowComments(Request $request)
+    public function GetShowComments(Request $request)
     {
         return VizsgaComments::where('show_id', $request->show_id)->get();
     }
 
-    public function store(Request $request)
+    public function SaveComment(Request $request)
     {
         $comment = VizsgaComments::create([
             'show_id' => $request->show_id,
@@ -29,9 +29,10 @@ class VizsgaCommentController extends Controller
         return response()->json(['success' => true, 'message' => 'Comment created successfully', 'comment' => $comment], 201);
     }
 
-    public function update(Request $request, $id)
+    public function UpdateComment(Request $request)
     {
-        if (!$comment = VizsgaComments::find($id)) {
+        $show_id = $request->show_id;
+        if (!$comment = VizsgaComments::find($show_id)) {
             return response()->json(['success' => false, 'message' => 'Comment not found'], 404);
         }
 
@@ -47,7 +48,7 @@ class VizsgaCommentController extends Controller
         return response()->json(['success' => true, 'message' => 'Comment updated successfully', 'comment' => $comment], 200);
     }
 
-    public function delete(Request $request, $id)
+    public function DeleteComment(Request $request, $id)
     {
         if (!$comment = VizsgaComments::find($id)) {
             return response()->json(['success' => false, 'message' => 'Comment not found'], 404);

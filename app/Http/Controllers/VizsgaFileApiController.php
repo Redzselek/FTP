@@ -101,14 +101,17 @@ class VizsgaFileApiController extends Controller{
         return response()->json(['success' => true, 'message' => 'Show successfully updated!']);
     }
 
-    function DeleteShow(Request $request, $id) {
-        $user = $request->user();
-        $show = VizsgaShows::find($id);
-        if ($show->user_id == $user->id) {
-            $show->delete();
-            return response()->json(['success' => true, 'message' => 'Show successfully deleted!']);
+    function DeleteShow($id) {
+        $show = VizsgaShows::where('id', $id)
+            ->where('user_id', auth()->id())
+            ->first();
+            
+        if (!$show) {
+            return response()->json(['success' => false, 'message' => 'Show not found or you do not have permission to delete it!'], 403);
         }
-        return response()->json(['success' => false, 'message' => 'Failed to delete.'], 422);
+        
+        $show->delete();
+        return response()->json(['success' => true, 'message' => 'Show successfully deleted!']);
     }
 
     function SelectedShow(Request $request, $id) {

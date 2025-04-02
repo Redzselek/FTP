@@ -4,60 +4,91 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
-use App\Models\User;
-use App\Models\VizsgaShows;
-use App\Models\VizsgaRatings;
-use App\Models\VizsgaComments;
-use App\Models\VizsgaLevel;
 use App\Models\VizsgaWatchlist;
-use Exception;
-use Illuminate\Support\Facades\DB;
-use Carbon\Carbon;
-use Illuminate\Support\Facades\Mail;
-use Illuminate\Support\Str;
-use Illuminate\Support\Facades\Hash;
-use Illuminate\Support\Facades\File;
-use Illuminate\Support\Facades\Storage;
-use Illuminate\Support\Facades\Cookie;
 
 class VizsgaWatchlistApiController extends Controller
 {
 
     function GetWatchlist(Request $request)
     {
-        $watchlist = VizsgaWatchlist::where('watchlist.user_id', Auth::id())
+        $user = $request->user();
+        
+        if (!$user) {
+            return response()->json(['success' => false, 'message' => 'User not authenticated'], 401);
+        }
+        
+        $watchlist = VizsgaWatchlist::where('watchlist.user_id', $user->id)
             ->join('shows', 'watchlist.show_id', '=', 'shows.id')
             ->select('watchlist.*', 'shows.title', 'shows.image_url')
             ->get();
-
+            
         if ($watchlist->isEmpty()) {
-            return response()->json(['message' => 'Your watchlist is empty'], 404);
+            return response()->json(['success' => false, 'message' => 'Your watchlist is empty'], 404);
         }
-        return response()->json($watchlist);
+        
+        return response()->json(['success' => true, 'data' => $watchlist]);
     }
 
     function AddWatchlist(Request $request, $showid)
     {
-        $exists = VizsgaWatchlist::where('user_id', Auth::id())->where('show_id', $showid)->exists();
+        $user = $request->user();
+        
+        if (!$user) {
+            return response()->json(['success' => false, 'message' => 'User not authenticated'], 401);
+        }
+        
+        $exists = VizsgaWatchlist::where('user_id', $user->id)
+            ->where('show_id', $showid)
+            ->exists();
 
         if ($exists) {
-            return response()->json(['message' => 'Show is already in your watchlist','status' => 'exists'], 409);
+            return response()->json(['success' => false, 'message' => 'Show is already in your watchlist', 'status' => 'exists'], 409);
         }
+        
         $watchlist = new VizsgaWatchlist();
-        $watchlist->user_id = Auth::id();
+        $watchlist->user_id = $user->id;
         $watchlist->show_id = $showid;
         $watchlist->save();
-        return response()->json(['message' => 'Show successfully added to your watchlist','status' => 'success']);
+        
+        return response()->json(['success' => true, 'message' => 'Show successfully added to your watchlist', 'status' => 'success']);
     }
 
     function RemoveWatchlist(Request $request, $showid)
     {
-        VizsgaWatchlist::where('user_id', Auth::id())->where('show_id', $showid)->delete();
-        return response()->json(['message' => 'Show successfully removed from your watchlist']);
+        $user = $request->user();
+        
+        if (!$user) {
+            return response()->json(['success' => false, 'message' => 'User not authenticated'], 401);
+        }
+        
+        $watchlistItem = VizsgaWatchlist::where('user_id', $user->id)
+            ->where('show_id', $showid)
+            ->first();
+            
+        if (!$watchlistItem) {
+            return response()->json(['success' => false, 'message' => 'Show not found in your watchlist'], 404);
+        }
+        
+        $watchlistItem->delete();
+        
+        return response()->json(['success' => true, 'message' => 'Show successfully removed from your watchlist']);
     }
 
     function GetShow(Request $request, $showid) {
-        $show = VizsgaWatchlist::where('user_id', Auth::id())->where('show_id', $showid)->get();
-        return response()->json($show);
+        $user = $request->user();
+        
+        if (!$user) {
+            return response()->json(['success' => false, 'message' => 'User not authenticated'], 401);
+        }
+        
+        $show = VizsgaWatchlist::where('user_id', $user->id)
+            ->where('show_id', $showid)
+            ->first();
+            
+        if (!$show) {
+            return response()->json(['success' => false, 'message' => 'Show not found in your watchlist'], 404);
+        }
+        
+        return response()->json(['success' => true, 'data' => $show]);
     }
 }

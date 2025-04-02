@@ -34,17 +34,19 @@ Route::get('/vizsga-api/get-average-rating', [VizsgaRatingApiController::class, 
 Route::middleware('auth:sanctum')->group(function () {
     Route::post('/vizsga-api/upload-show', [VizsgaFileApiController::class, 'UploadShow']);
     Route::post('/vizsga-api/update-show', [VizsgaFileApiController::class, 'UpdateShow']);
-    Route::post('/vizsga-api/delete-show', [VizsgaFileApiController::class, 'DeleteShow']);
-    Route::post('/vizsga-api/selected-show/{id}', [VizsgaFileApiController::class, 'SelectedShow']);
+    Route::post('/vizsga-api/delete-show/{id}', [VizsgaFileApiController::class, 'DeleteShow']);
+    Route::get('/vizsga-api/selected-show/{id}', [VizsgaFileApiController::class, 'SelectedShow']);
+    Route::get('/vizsga-api/show-movies', [VizsgaUserApiController::class, 'ShowMovies']);
+    Route::get('/vizsga-api/show-series', [VizsgaUserApiController::class, 'ShowSeries']);
+
     Route::post('/vizsga-api/new-password', [VizsgaUserApiController::class, 'NewPassword']);
-    
     Route::post('/vizsga-api/forgot-password', [VizsgaUserApiController::class, 'ForgotPassword']);
     
     Route::post('/vizsga-api/get-comments', [VizsgaCommentController::class, 'index']);
-    Route::post('/vizsga-api/get-show-comments', [VizsgaCommentController::class, 'getShowComments']);
-    Route::post('/vizsga-api/save-comment', [VizsgaCommentController::class, 'store']);
-    Route::post('/vizsga-api/update-comment/{id}', [VizsgaCommentController::class, 'update']);
-    Route::post('/vizsga-api/delete-comment/{id}', [VizsgaCommentController::class, 'delete']);
+    Route::post('/vizsga-api/get-show-comments', [VizsgaCommentController::class, 'GetShowComments']);
+    Route::post('/vizsga-api/save-comment', [VizsgaCommentController::class, 'SaveComment']);
+    Route::post('/vizsga-api/update-comment', [VizsgaCommentController::class, 'UpdateComment']);
+    Route::post('/vizsga-api/delete-comment/{id}', [VizsgaCommentController::class, 'DeleteComment']);
 
     Route::post('/vizsga-api/get-watchlist', [VizsgaWatchlistApiController::class, 'GetWatchlist']);
     Route::post('/vizsga-api/add-watchlist/{showid}', [VizsgaWatchlistApiController::class, 'AddWatchlist']);
