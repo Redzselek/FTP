@@ -45,8 +45,7 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::post('/vizsga-api/get-comments', [VizsgaCommentController::class, 'index']);
     Route::post('/vizsga-api/get-show-comments', [VizsgaCommentController::class, 'GetShowComments']);
     Route::post('/vizsga-api/save-comment', [VizsgaCommentController::class, 'SaveComment']);
-    Route::post('/vizsga-api/update-comment', [VizsgaCommentController::class, 'UpdateComment']);
-    Route::post('/vizsga-api/delete-comment/{id}', [VizsgaCommentController::class, 'DeleteComment']);
+    Route::post('/vizsga-api/delete-comment', [VizsgaCommentController::class, 'DeleteComment']);
 
     Route::post('/vizsga-api/get-watchlist', [VizsgaWatchlistApiController::class, 'GetWatchlist']);
     Route::post('/vizsga-api/add-watchlist/{showid}', [VizsgaWatchlistApiController::class, 'AddWatchlist']);

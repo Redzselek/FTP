@@ -18,14 +18,11 @@ class VizsgaRatingApiController extends Controller{
             'show_id' => 'required',
             'rating' => 'required'
         ]);
-        
         $userId = Auth::id();
-        
         $rating = VizsgaRatings::updateOrCreate(
             ['user_id' => $userId, 'show_id' => $request->show_id],
             ['rating' => $request->rating]
         );
-        
         // Check if this was a new record or an update
         $wasRecentlyCreated = $rating->wasRecentlyCreated;
         

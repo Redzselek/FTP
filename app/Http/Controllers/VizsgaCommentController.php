@@ -20,13 +20,28 @@ class VizsgaCommentController extends Controller
 
     public function SaveComment(Request $request)
     {
-        $comment = VizsgaComments::create([
-            'show_id' => $request->show_id,
-            'user_id' => Auth::id(),
+        $exists = VizsgaComments::where('show_id', $request->show_id)
+            ->where('user_id', Auth::id())
+            ->exists();
+            
+        $data = [
             'comment' => $request->comment
-        ]);
+        ];
         
-        return response()->json(['success' => true, 'message' => 'Comment created successfully', 'comment' => $comment], 201);
+        if ($exists) {
+            $data['edited'] = 1;
+        }
+        
+        $comment = VizsgaComments::updateOrCreate(
+            [
+                'show_id' => $request->show_id,
+                'user_id' => Auth::id()
+            ],
+            $data
+        );
+        
+        $message = $exists ? 'Comment updated successfully' : 'Comment created successfully';
+        return response()->json(['success' => true, 'message' => $message, 'comment' => $comment], 201);
     }
 
     public function UpdateComment(Request $request)
@@ -48,8 +63,10 @@ class VizsgaCommentController extends Controller
         return response()->json(['success' => true, 'message' => 'Comment updated successfully', 'comment' => $comment], 200);
     }
 
-    public function DeleteComment(Request $request, $id)
+    public function DeleteComment(Request $request)
     {
+        $id = $request->id;
+        
         if (!$comment = VizsgaComments::find($id)) {
             return response()->json(['success' => false, 'message' => 'Comment not found'], 404);
         }
