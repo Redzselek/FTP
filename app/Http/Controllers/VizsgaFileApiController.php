@@ -47,11 +47,10 @@ class VizsgaFileApiController extends Controller{
             $upload->description = $data['description'];
             $upload->category = $data['category'];
             $upload->type = $data['type'];
-            $upload->season = $data['season'];
-            $upload->episode = $data['episode'];
+            $upload->season = $data['season'] ?? 0;
+            $upload->episode = $data['episode'] ?? 0;
             $upload->image_url = $fileName;
             $upload->user_id = $user->id;
-            // $user->rating = null;
 
             $upload->save();
             return response()->json(['success' => true, 'message' => 'Show uploaded successfully'], 200);

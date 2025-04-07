@@ -60,12 +60,6 @@ class VizsgaRatingApiController extends Controller{
         return response()->json([
             'success' => true,
             'average_rating' => $avgRating ?? 0
-            // Ezt rövidíti
-            // if ($avgRating === null) {
-            //     $average_rating = 0;
-            // } else {
-            //     $average_rating = $avgRating;
-            // }
         ]);
     }
 }

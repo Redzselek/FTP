@@ -8,6 +8,7 @@ use App\Http\Controllers\VizsgaFileApiController;
 use App\Http\Controllers\VizsgaWatchlistApiController;
 use App\Http\Controllers\VizsgaRatingApiController;
 use App\Http\Controllers\VizsgaCommentController;
+use App\Http\Controllers\VizsgaSearchApiController;
 
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Response;
@@ -54,6 +55,9 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::post('/vizsga-api/add-rating', [VizsgaRatingApiController::class, 'AddRating']);
     Route::post('/vizsga-api/delete-rating', [VizsgaRatingApiController::class, 'DeleteRating']);
     Route::post('/vizsga-api/avg-rating', [VizsgaRatingApiController::class, 'GetAverageRating']);
+
+    Route::post('/vizsga-api/search', [VizsgaSearchApiController::class, 'Search']);
+    Route::post('/vizsga-api/filter', [VizsgaSearchApiController::class, 'Filter']);
 });
 
 

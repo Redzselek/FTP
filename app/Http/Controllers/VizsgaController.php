@@ -21,7 +21,7 @@ class VizsgaController extends Controller
     public function Dashboard()
     {
         $user = Auth::user();
-        $shows = VizsgaShows::all();
+        $shows = VizsgaShows::orderBy('id', 'desc')->get();
 
         return response()->json([
             'status' => 'success',
