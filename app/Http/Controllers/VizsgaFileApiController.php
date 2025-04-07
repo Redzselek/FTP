@@ -64,7 +64,7 @@ class VizsgaFileApiController extends Controller{
             'title' => 'required|string|max:200',
             'description' => 'required|string',
             'category' => 'required|string|max:20',
-            'type' => 'required|in:film,sorozat',
+            'type' => 'required|in:movie,series',
             'season' => 'required|integer|nullable',
             'episode' => 'required|integer|nullable',
             'file' => 'nullable|file|mimes:jpg,jpeg,png,webp|max:5120',
@@ -80,7 +80,6 @@ class VizsgaFileApiController extends Controller{
         $show->type = $request->type;
         $show->season = $request->season;
         $show->episode = $request->episode;
-        $show->image_url = $request->file;
 
         if ($request->hasFile('file')) {
             // Kép törlés
