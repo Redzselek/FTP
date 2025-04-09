@@ -31,6 +31,7 @@ Route::post('/vizsga-api/new-password', [VizsgaUserApiController::class, 'NewPas
 Route::get('/vizsga-api/user', [VizsgaUserApiController::class, 'User']);
 Route::get('/vizsga-api/get-ratings', [VizsgaRatingApiController::class, 'GetRatings']);
 Route::get('/vizsga-api/get-average-rating', [VizsgaRatingApiController::class, 'GetAverageRating']);
+Route::get('/vizsga-api/get-categories', [VizsgaFileApiController::class, 'GetCategories']);
 
 Route::middleware('auth:sanctum')->group(function () {
     Route::post('/vizsga-api/upload-show', [VizsgaFileApiController::class, 'UploadShow']);
@@ -39,7 +40,7 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::get('/vizsga-api/selected-show/{id}', [VizsgaFileApiController::class, 'SelectedShow']);
     Route::get('/vizsga-api/show-movies', [VizsgaUserApiController::class, 'ShowMovies']);
     Route::get('/vizsga-api/show-series', [VizsgaUserApiController::class, 'ShowSeries']);
-
+    
     Route::post('/vizsga-api/new-password', [VizsgaUserApiController::class, 'NewPassword']);
     Route::post('/vizsga-api/forgot-password', [VizsgaUserApiController::class, 'ForgotPassword']);
     
@@ -54,20 +55,11 @@ Route::middleware('auth:sanctum')->group(function () {
 
     Route::post('/vizsga-api/add-rating', [VizsgaRatingApiController::class, 'AddRating']);
     Route::post('/vizsga-api/delete-rating', [VizsgaRatingApiController::class, 'DeleteRating']);
-    Route::post('/vizsga-api/avg-rating', [VizsgaRatingApiController::class, 'GetAverageRating']);
+    Route::get('/vizsga-api/avg-rating/{show_id}', [VizsgaRatingApiController::class, 'GetAverageRating']);
 
     Route::post('/vizsga-api/search', [VizsgaSearchApiController::class, 'Search']);
     Route::post('/vizsga-api/filter', [VizsgaSearchApiController::class, 'Filter']);
 });
-
-
-
-
-
-
-
-
-
 
 
 

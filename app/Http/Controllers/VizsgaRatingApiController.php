@@ -50,12 +50,8 @@ class VizsgaRatingApiController extends Controller{
         }
     }
 
-    function GetAverageRating(Request $request) {
-        $request->validate([
-            'show_id' => 'required|exists:shows,id'
-        ]);
-        
-        $avgRating = VizsgaRatings::averageRating($request->show_id);
+    function GetAverageRating(Request $request, $show_id) {
+        $avgRating = VizsgaRatings::averageRating($show_id);
         
         return response()->json([
             'success' => true,

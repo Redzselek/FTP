@@ -8,8 +8,8 @@ use App\Models\User;
 use App\Models\VizsgaShows;
 use App\Models\VizsgaRatings;
 use App\Models\VizsgaComments;
-use App\Models\VizsgaLevel;
 use App\Models\VizsgaWatchlist;
+use App\Models\VizsgaCategories;
 use Exception;
 use Illuminate\Support\Facades\DB;
 use Carbon\Carbon;
@@ -117,4 +117,8 @@ class VizsgaFileApiController extends Controller{
         return response()->json($show);
     }
 
+    function GetCategories(){
+        $categories = VizsgaCategories::all();
+        return response()->json($categories);
+    }
 }
