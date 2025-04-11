@@ -101,7 +101,7 @@ class VizsgaUserApiController extends Controller{
                 border-radius: 5px;
             }
             .header {
-                background-color: #4a90e2;
+                background-color: #694c94;
                 color: white;
                 padding: 15px;
                 text-align: center;
@@ -133,10 +133,13 @@ class VizsgaUserApiController extends Controller{
                 text-align: center;
             }
             a {
-                color: #4a90e2;
+                color: #9b83c0;
                 text-decoration: none;
                 margin: 15px 0;
                 border-radius: 5px;
+            }
+            a:hover {
+                color: #af9ccd;
             }
         </style>
     </head>

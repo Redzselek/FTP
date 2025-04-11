@@ -63,7 +63,7 @@ class VizsgaFileApiController extends Controller{
             'id' => 'required|exists:shows,id',
             'title' => 'required|string|max:200',
             'description' => 'required|string',
-            'category' => 'required|string|max:20',
+            'category' => 'required|string',
             'type' => 'required|in:movie,series',
             'season' => 'required|integer|nullable',
             'episode' => 'required|integer|nullable',
