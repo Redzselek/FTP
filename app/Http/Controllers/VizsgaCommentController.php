@@ -15,7 +15,10 @@ class VizsgaCommentController extends Controller
 
     public function GetShowComments(Request $request)
     {
-        return VizsgaComments::where('show_id', $request->show_id)->get();
+        return VizsgaComments::where('show_id', $request->show_id)
+            ->join('users', 'comments.user_id', '=', 'users.id')
+            ->select('comments.*', 'users.id as user_id', 'users.name as user_name')
+            ->get();
     }
 
     public function SaveComment(Request $request)

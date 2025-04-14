@@ -52,10 +52,45 @@ class VizsgaRatingApiController extends Controller{
 
     function GetAverageRating(Request $request, $show_id) {
         $avgRating = VizsgaRatings::averageRating($show_id);
+        $userRating = null;
+        
+        if (Auth::check()) {
+            $userId = Auth::id();
+            $userRatingObj = VizsgaRatings::where('user_id', $userId)
+                ->where('show_id', $show_id)
+                ->first();
+                
+            if ($userRatingObj) {
+                $userRating = $userRatingObj->rating;
+            }
+        }
         
         return response()->json([
-            'success' => true,
-            'average_rating' => $avgRating ?? 0
+            'average_rating' => round($avgRating ?? 0, 2),
+            'user_rating' => $userRating
         ]);
+    }
+
+    function GetAllAverageRating() {
+        $avgRatings = VizsgaRatings::all();
+        $showIds = $avgRatings->pluck('show_id')->unique();
+        $result = [];
+        
+        // Calculate average ratings for each show
+        foreach ($showIds as $showId) {
+            $avgRating = $avgRatings->where('show_id', $showId)->avg('rating');
+            $roundedRating = round($avgRating ?? 0, 2);
+            $result[] = [
+                'show_id' => $showId,
+                'average_rating' => $roundedRating
+            ];
+        }
+
+        // Sort in descending order by average_rating
+        usort($result, function($a, $b) {
+            return $b['average_rating'] <=> $a['average_rating'];
+        });
+        
+        return response()->json($result);
     }
 }
