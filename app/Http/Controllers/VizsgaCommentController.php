@@ -18,39 +18,25 @@ class VizsgaCommentController extends Controller
         return VizsgaComments::where('show_id', $request->show_id)
             ->join('users', 'comments.user_id', '=', 'users.id')
             ->select('comments.*', 'users.id as user_id', 'users.name as user_name')
+            ->orderBy('created_at', 'desc')
             ->get();
     }
 
-    public function SaveComment(Request $request)
+    public function CreateComment(Request $request)
     {
-        $exists = VizsgaComments::where('show_id', $request->show_id)
-            ->where('user_id', Auth::id())
-            ->exists();
-            
-        $data = [
+        $comment = VizsgaComments::create([
+            'show_id' => $request->show_id,
+            'user_id' => Auth::id(),
             'comment' => $request->comment
-        ];
+        ]);
         
-        if ($exists) {
-            $data['edited'] = 1;
-        }
-        
-        $comment = VizsgaComments::updateOrCreate(
-            [
-                'show_id' => $request->show_id,
-                'user_id' => Auth::id()
-            ],
-            $data
-        );
-        
-        $message = $exists ? 'Comment updated successfully' : 'Comment created successfully';
-        return response()->json(['success' => true, 'message' => $message, 'comment' => $comment], 201);
+        return response()->json(['success' => true, 'message' => 'Comment created successfully', 'comment' => $comment], 201);
     }
 
     public function UpdateComment(Request $request)
     {
-        $show_id = $request->show_id;
-        if (!$comment = VizsgaComments::find($show_id)) {
+        $id = $request->id;
+        if (!$comment = VizsgaComments::find($id)) {
             return response()->json(['success' => false, 'message' => 'Comment not found'], 404);
         }
 
@@ -58,7 +44,6 @@ class VizsgaCommentController extends Controller
             return response()->json(['success' => false, 'message' => 'Unauthorized'], 403);
         }
 
-        $comment->show_id = $request->show_id;
         $comment->comment = $request->comment;
         $comment->edited = 1;
         $comment->save();
